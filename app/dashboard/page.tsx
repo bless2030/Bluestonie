@@ -12,6 +12,20 @@ type Notice = {
   created_at: string;
 };
 
+type Referral = {
+  id: string;
+  referred_user_id: string;
+  commission_rate: number;
+  commission_amount_usd: number;
+  commission_amount_ugx: number;
+  status: string;
+  created_at: string;
+  referred_profile?: {
+    full_name: string | null;
+    phone: string | null;
+  }[] | null;
+};
+
 type Task = {
   id: string;
   title: string;
@@ -81,6 +95,8 @@ const [depositAccountName, setDepositAccountName] = useState("");
   const [submittingWithdrawal, setSubmittingWithdrawal] =
     useState(false);
 
+const [referrals, setReferrals] = useState<Referral[]>([]);
+
   const [completingTask, setCompletingTask] =
     useState<string | null>(null);
 
@@ -120,6 +136,7 @@ const [depositAccountName, setDepositAccountName] = useState("");
         depositsResult,
         withdrawalsResult,
         depositSettingsResult,
+        referralsResult
       ] = await Promise.all([
 
        
@@ -186,8 +203,14 @@ const [depositAccountName, setDepositAccountName] = useState("");
     "deposit_account_name",
   ]), 
 
-
-      ]);
+supabase
+  .from("referrals")
+  .select(
+    "id, referred_user_id, commission_rate, commission_amount_usd, commission_amount_ugx, status, created_at"
+  )
+  .eq("referrer_id", user.id)
+  .order("created_at", { ascending: false }),
+  ]);
      
 
       if (profileResult.error) {
@@ -207,10 +230,43 @@ const [depositAccountName, setDepositAccountName] = useState("");
       }
 
       setProfile(profileResult.data as Profile);
-      setWallet(walletResult.data as Wallet);
-      setPackages((packagesResult.data || []) as Package[]);
+setWallet(walletResult.data as Wallet);
+setPackages((packagesResult.data || []) as Package[]);
 
-      if (!depositSettingsResult.error) {
+const referralRows = (referralsResult.data || []) as Referral[];
+
+if (referralRows.length > 0) {
+  const referredUserIds = referralRows.map(
+    (referral) => referral.referred_user_id
+  );
+
+  const { data: referredProfiles, error: referredProfilesError } =
+    await supabase.rpc("get_my_referred_profiles", {
+      p_user_ids: referredUserIds,
+    });
+
+  if (referredProfilesError) {
+    console.error(
+      "REFERRED PROFILES ERROR:",
+      referredProfilesError
+    );
+  }
+
+  const referralsWithProfiles = referralRows.map((referral) => ({
+    ...referral,
+    referred_profile:
+     referredProfiles?.filter(
+  (profile: { id: string; full_name: string | null; phone: string | null }) =>
+    profile.id === referral.referred_user_id
+) || [],
+  }));
+
+  setReferrals(referralsWithProfiles);
+} else {
+  setReferrals([]);
+}
+
+if (!depositSettingsResult.error) {
   depositSettingsResult.data?.forEach((setting) => {
     if (setting.key === "deposit_method") {
       setDepositMethod(setting.value || "");
@@ -521,6 +577,28 @@ const balance = Number(
   wallet?.balance_usd || 0
 );
 
+const totalReferrals = referrals.length;
+
+const completedReferrals = referrals.filter(
+  (referral) => referral.status === "completed"
+).length;
+
+const referralEarningsUsd = referrals.reduce(
+  (total, referral) =>
+    total + Number(referral.commission_amount_usd || 0),
+  0
+);
+
+const referralEarningsUgx = referrals.reduce(
+  (total, referral) =>
+    total + Number(referral.commission_amount_ugx || 0),
+  0
+);
+
+const referralCode =
+  (profile as Profile & { referral_code?: string | null })
+    ?.referral_code || "";
+
   /*
    * TOTAL DEPOSITS
    *
@@ -709,7 +787,7 @@ const withdrawableProfitUgx = Math.round(
             />
 
             <SummaryCard
-              label="Capital Locked"
+              label="Running Investment"
               value={`$${capitalLocked.toFixed(2)}`}
             />
 
@@ -1081,45 +1159,7 @@ const withdrawableProfitUgx = Math.round(
           </section>
         )}
 
-        {/* NOTICES */}
-        {notices.length > 0 && (
-          <section className="mt-6">
-            <div className="mb-3">
-              <h2 className="text-lg font-extrabold text-slate-900">
-                Messages & Notices
-              </h2>
-
-              <p className="text-xs text-slate-500">
-                Important updates for your account.
-              </p>
-            </div>
-
-            <div className="space-y-3">
-              {notices.map((notice) => (
-                <div
-                  key={notice.id}
-                  className="rounded-2xl border border-blue-100 bg-white p-4 shadow-sm"
-                >
-                  <p className="font-extrabold text-slate-900">
-                    {notice.title}
-                  </p>
-
-                  <p className="mt-1 text-sm leading-6 text-slate-600">
-                    {notice.message}
-                  </p>
-
-                  <p className="mt-2 text-[11px] text-slate-400">
-                    {new Date(
-                      notice.created_at
-                    ).toLocaleDateString()}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* PACKAGES */}
+ {/* PACKAGES */}
         <section
           ref={packageSectionRef}
           className="mt-7 scroll-mt-6"
@@ -1198,6 +1238,212 @@ const withdrawableProfitUgx = Math.round(
             })}
           </div>
         </section>
+
+        {/* REFERRALS */}
+<section className="mt-6">
+  <div className="mb-3">
+    <h2 className="text-lg font-extrabold text-slate-900">
+      Referral & Earnings
+    </h2>
+
+    <p className="text-xs text-slate-500">
+      Earn 10% commission when your referrals make qualifying deposits.
+    </p>
+  </div>
+
+  <div className="rounded-2xl border border-blue-100 bg-white p-5 shadow-sm">
+    {/* Referral Code */}
+    <div className="rounded-xl bg-slate-50 p-4">
+      <p className="text-xs font-semibold text-slate-500">
+        Your Referral Code
+      </p>
+
+      <div className="mt-2 flex items-center justify-between gap-3">
+        <p className="text-lg font-extrabold tracking-wide text-blue-900">
+          {referralCode || "Loading..."}
+        </p>
+      </div>
+    </div>
+
+    {/* Referral Link */}
+    {referralCode && (
+      <div className="mt-4">
+        <p className="text-xs font-semibold text-slate-500">
+          Your Referral Link
+        </p>
+
+        <div className="mt-2 flex gap-2">
+          <input
+            readOnly
+            value={`${window.location.origin}/register?ref=${encodeURIComponent(
+              referralCode
+            )}`}
+            className="min-w-0 flex-1 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600 outline-none"
+          />
+
+          <button
+            type="button"
+            onClick={async () => {
+              const link = `${window.location.origin}/register?ref=${encodeURIComponent(
+                referralCode
+              )}`;
+
+              try {
+                await navigator.clipboard.writeText(link);
+                setMessage("Referral link copied.");
+              } catch {
+                setError("Unable to copy referral link.");
+              }
+            }}
+            className="rounded-xl bg-blue-600 px-4 py-2 text-xs font-bold text-white transition hover:bg-blue-700"
+          >
+            Copy
+          </button>
+        </div>
+      </div>
+    )}
+
+    {/* Referral Statistics */}
+    <div className="mt-5 grid grid-cols-2 gap-3 md:grid-cols-4">
+      <div className="rounded-xl border border-slate-100 bg-white p-3">
+        <p className="text-[11px] font-semibold text-slate-500">
+          Total Referrals
+        </p>
+
+        <p className="mt-1 text-xl font-extrabold text-slate-900">
+          {totalReferrals}
+        </p>
+      </div>
+
+      <div className="rounded-xl border border-slate-100 bg-white p-3">
+        <p className="text-[11px] font-semibold text-slate-500">
+          Completed
+        </p>
+
+        <p className="mt-1 text-xl font-extrabold text-slate-900">
+          {completedReferrals}
+        </p>
+      </div>
+
+      <div className="rounded-xl border border-slate-100 bg-white p-3">
+        <p className="text-[11px] font-semibold text-slate-500">
+          Commission
+        </p>
+
+        <p className="mt-1 text-xl font-extrabold text-blue-700">
+          ${referralEarningsUsd.toFixed(2)}
+        </p>
+      </div>
+
+      <div className="rounded-xl border border-slate-100 bg-white p-3">
+        <p className="text-[11px] font-semibold text-slate-500">
+          Rate
+        </p>
+
+        <p className="mt-1 text-xl font-extrabold text-slate-900">
+          10%
+        </p>
+      </div>
+    </div>
+
+    {/* Recent Referrals */}
+    {referrals.length > 0 && (
+      <div className="mt-5">
+        <p className="mb-2 text-sm font-extrabold text-slate-900">
+          Recent Referrals
+        </p>
+
+        <div className="space-y-2">
+          {referrals.slice(0, 5).map((referral) => (
+            <div
+              key={referral.id}
+              className="flex items-center justify-between gap-3 rounded-xl border border-slate-100 bg-slate-50 p-3"
+            >
+              <div className="min-w-0">
+                <p className="truncate text-xs font-bold text-slate-700">
+  {referral.referred_profile?.[0]?.full_name ||
+    `Referral #${referral.referred_user_id.slice(0, 8)}`}
+</p>
+
+                <p className="mt-1 text-[11px] text-slate-400">
+                  {new Date(
+                    referral.created_at
+                  ).toLocaleDateString()}
+                </p>
+              </div>
+
+              <div className="text-right">
+                <p className="text-sm font-extrabold text-blue-700">
+                  ${Number(
+                    referral.commission_amount_usd || 0
+                  ).toFixed(2)}
+                </p>
+
+                <p className="text-[11px] font-semibold text-slate-500">
+  UGX{" "}
+  {Number(
+    referral.commission_amount_ugx || 0
+  ).toLocaleString()}
+</p>
+
+                <p
+                  className={`text-[10px] font-bold uppercase ${
+                    referral.status === "completed"
+                      ? "text-green-600"
+                      : "text-amber-600"
+                  }`}
+                >
+                  {referral.status}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    )}
+  </div>
+</section>
+
+
+        {/* NOTICES */}
+        {notices.length > 0 && (
+          <section className="mt-6">
+            <div className="mb-3">
+              <h2 className="text-lg font-extrabold text-slate-900">
+                Messages & Notices
+              </h2>
+
+              <p className="text-xs text-slate-500">
+                Important updates for your account.
+              </p>
+            </div>
+
+            <div className="space-y-3">
+              {notices.map((notice) => (
+                <div
+                  key={notice.id}
+                  className="rounded-2xl border border-blue-100 bg-white p-4 shadow-sm"
+                >
+                  <p className="font-extrabold text-slate-900">
+                    {notice.title}
+                  </p>
+
+                  <p className="mt-1 text-sm leading-6 text-slate-600">
+                    {notice.message}
+                  </p>
+
+                  <p className="mt-2 text-[11px] text-slate-400">
+                    {new Date(
+                      notice.created_at
+                    ).toLocaleDateString()}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+       
 
         {/* DAILY TASKS */}
         <section className="mt-7">

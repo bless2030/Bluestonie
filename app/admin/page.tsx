@@ -17,11 +17,38 @@ type Toast = {
   message: string;
 };
 
+type Referral = {
+  id: string;
+  referrer_id: string;
+  referred_user_id: string;
+  commission_rate: number;
+  commission_amount_usd: number;
+  commission_amount_ugx: number;
+  status: string;
+  qualifying_transaction_id: string | null;
+  created_at: string;
+
+  referrer_profile?: {
+    id: string;
+    full_name: string | null;
+    phone: string | null;
+    country: string | null;
+  }[] | null;
+
+  referred_profile?: {
+    id: string;
+    full_name: string | null;
+    phone: string | null;
+    country: string | null;
+  }[] | null;
+};
+
 const menuItems = [
   "Overview",
   "Deposits",
   "Deposit Settings",
   "Withdrawals",
+  "Referrals",
   "Users",
   "Packages",
   "Daily Tasks",
@@ -40,6 +67,9 @@ export default function AdminPage() {
 
   const [deposits, setDeposits] = useState<Deposit[]>([]);
   const [loadingDeposits, setLoadingDeposits] = useState(false);
+
+  const [referrals, setReferrals] = useState<Referral[]>([]);
+const [loadingReferrals, setLoadingReferrals] = useState(false);
 
   const [toast, setToast] = useState<Toast | null>(null);
   const [search, setSearch] = useState("");
@@ -89,6 +119,87 @@ const [savingDepositSettings, setSavingDepositSettings] =
 
     setLoadingDeposits(false);
   }, [showToast]);
+
+const loadReferrals = useCallback(async () => {
+  setLoadingReferrals(true);
+
+  const { data, error } = await supabase
+    .from("referrals")
+    .select(
+      "id, referrer_id, referred_user_id, commission_rate, commission_amount_usd, commission_amount_ugx, status, qualifying_transaction_id, created_at"
+    )
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("Failed to load referrals:", error);
+    setReferrals([]);
+    showToast("error", error.message);
+    setLoadingReferrals(false);
+    return;
+  }
+
+  const referralRows = (data || []) as Referral[];
+
+  if (referralRows.length === 0) {
+    setReferrals([]);
+    setLoadingReferrals(false);
+    return;
+  }
+
+  const userIds = Array.from(
+    new Set(
+      referralRows.flatMap((referral) => [
+        referral.referrer_id,
+        referral.referred_user_id,
+      ])
+    )
+  );
+
+  const {
+    data: referralProfiles,
+    error: profileError,
+  } = await supabase.rpc("get_admin_referral_profiles", {
+    p_user_ids: userIds,
+  });
+
+  if (profileError) {
+    console.error(
+      "Failed to load referral profiles:",
+      profileError
+    );
+    setReferrals(referralRows);
+    setLoadingReferrals(false);
+    return;
+  }
+
+  const referralsWithProfiles = referralRows.map(
+    (referral) => ({
+      ...referral,
+      referrer_profile:
+        referralProfiles?.filter(
+          (profile: {
+            id: string;
+            full_name: string | null;
+            phone: string | null;
+            country: string | null;
+          }) => profile.id === referral.referrer_id
+        ) || [],
+
+      referred_profile:
+        referralProfiles?.filter(
+          (profile: {
+            id: string;
+            full_name: string | null;
+            phone: string | null;
+            country: string | null;
+          }) => profile.id === referral.referred_user_id
+        ) || [],
+    })
+  );
+
+  setReferrals(referralsWithProfiles);
+  setLoadingReferrals(false);
+}, [showToast]);
 
 const loadDepositSettings = useCallback(async () => {
   const { data, error } = await supabase
@@ -211,10 +322,11 @@ const saveDepositSettings = useCallback(async () => {
 
       if (cancelled) return;
 
-      setIsAdminAuthorized(true);
-      setCheckingAdmin(false);
+    setIsAdminAuthorized(true);
+setCheckingAdmin(false);
 
-      await loadDeposits();
+await loadDeposits();
+await loadReferrals();
     }
 
     void verifyAdministrator();
@@ -222,7 +334,7 @@ const saveDepositSettings = useCallback(async () => {
     return () => {
       cancelled = true;
     };
-  }, [loadDeposits, router]);
+  }, [loadDeposits, loadReferrals, router]);
 
   if (checkingAdmin || !isAdminAuthorized) {
     return (
@@ -246,6 +358,26 @@ const saveDepositSettings = useCallback(async () => {
   const verifiedDeposits = deposits.filter(
     (deposit) => deposit.status === "verified"
   );
+
+const completedReferrals = referrals.filter(
+  (referral) => referral.status === "completed"
+);
+
+const pendingReferrals = referrals.filter(
+  (referral) => referral.status === "pending"
+);
+
+const totalReferralCommissionUsd = referrals.reduce(
+  (sum, referral) =>
+    sum + Number(referral.commission_amount_usd || 0),
+  0
+);
+
+const totalReferralCommissionUgx = referrals.reduce(
+  (sum, referral) =>
+    sum + Number(referral.commission_amount_ugx || 0),
+  0
+);
 
   const totalVerified = verifiedDeposits.reduce(
     (sum, deposit) => sum + Number(deposit.amount_usd || 0),
@@ -466,7 +598,198 @@ const saveDepositSettings = useCallback(async () => {
               showToast={showToast}
             />
           )}
+          
+          {activeSection === "Referrals" && (
+  <section className="space-y-6">
+    {/* Header */}
+    <div>
+      <p className="text-xs font-bold uppercase tracking-wide text-blue-600">
+        Referral Management
+      </p>
 
+      <h2 className="mt-1 text-xl font-extrabold text-slate-900">
+        Referrals & Commissions
+      </h2>
+
+      <p className="mt-1 text-sm text-slate-500">
+        Monitor referral relationships and commission earnings.
+      </p>
+    </div>
+
+    {/* Statistics */}
+    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <p className="text-xs font-bold uppercase tracking-wide text-slate-500">
+          Total Referrals
+        </p>
+
+        <p className="mt-2 text-3xl font-extrabold text-slate-900">
+          {referrals.length}
+        </p>
+      </div>
+
+      <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <p className="text-xs font-bold uppercase tracking-wide text-slate-500">
+          Completed
+        </p>
+
+        <p className="mt-2 text-3xl font-extrabold text-green-600">
+          {completedReferrals.length}
+        </p>
+      </div>
+
+      <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <p className="text-xs font-bold uppercase tracking-wide text-slate-500">
+          Pending
+        </p>
+
+        <p className="mt-2 text-3xl font-extrabold text-amber-500">
+          {pendingReferrals.length}
+        </p>
+      </div>
+
+      <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <p className="text-xs font-bold uppercase tracking-wide text-slate-500">
+          Commission Earned
+        </p>
+
+        <p className="mt-2 text-2xl font-extrabold text-blue-700">
+          ${totalReferralCommissionUsd.toFixed(2)}
+        </p>
+
+        <p className="mt-1 text-xs font-semibold text-slate-500">
+          UGX {totalReferralCommissionUgx.toLocaleString()}
+        </p>
+      </div>
+    </div>
+
+    {/* Referral Table */}
+    <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <div className="border-b border-slate-100 p-5">
+        <h3 className="text-base font-extrabold text-slate-900">
+          Referral Records
+        </h3>
+
+        <p className="mt-1 text-xs text-slate-500">
+          All referral relationships recorded by BLUESTONIE.
+        </p>
+      </div>
+
+      {loadingReferrals ? (
+        <div className="p-8 text-center text-sm text-slate-500">
+          Loading referrals...
+        </div>
+      ) : referrals.length === 0 ? (
+        <div className="p-8 text-center text-sm text-slate-500">
+          No referral records found.
+        </div>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[850px] text-left">
+            <thead className="bg-slate-50">
+              <tr>
+                <th className="px-5 py-3 text-xs font-bold uppercase tracking-wide text-slate-500">
+                  Referrer
+                </th>
+
+                <th className="px-5 py-3 text-xs font-bold uppercase tracking-wide text-slate-500">
+                  Referred User
+                </th>
+
+                <th className="px-5 py-3 text-xs font-bold uppercase tracking-wide text-slate-500">
+                  Rate
+                </th>
+
+                <th className="px-5 py-3 text-xs font-bold uppercase tracking-wide text-slate-500">
+                  Commission
+                </th>
+
+                <th className="px-5 py-3 text-xs font-bold uppercase tracking-wide text-slate-500">
+                  Status
+                </th>
+
+                <th className="px-5 py-3 text-xs font-bold uppercase tracking-wide text-slate-500">
+                  Date
+                </th>
+              </tr>
+            </thead>
+
+            <tbody className="divide-y divide-slate-100">
+              {referrals.map((referral) => (
+                <tr key={referral.id} className="hover:bg-slate-50">
+                  <td className="px-5 py-4">
+  <p className="text-xs font-bold text-slate-800">
+    {referral.referrer_profile?.[0]?.full_name ||
+      `User #${referral.referrer_id.slice(0, 8)}`}
+  </p>
+
+  {referral.referrer_profile?.[0]?.phone && (
+    <p className="mt-1 text-[11px] text-slate-400">
+      {referral.referrer_profile[0].phone}
+    </p>
+  )}
+</td>
+
+<td className="px-5 py-4">
+  <p className="text-xs font-bold text-slate-800">
+    {referral.referred_profile?.[0]?.full_name ||
+      `User #${referral.referred_user_id.slice(0, 8)}`}
+  </p>
+
+  {referral.referred_profile?.[0]?.phone && (
+    <p className="mt-1 text-[11px] text-slate-400">
+      {referral.referred_profile[0].phone}
+    </p>
+  )}
+</td>
+
+                  <td className="px-5 py-4">
+                    <span className="text-xs font-bold text-slate-700">
+                      {Number(referral.commission_rate || 0)}%
+                    </span>
+                  </td>
+
+                  <td className="px-5 py-4">
+                    <p className="text-sm font-extrabold text-blue-700">
+                      ${Number(
+                        referral.commission_amount_usd || 0
+                      ).toFixed(2)}
+                    </p>
+
+                    <p className="text-[11px] font-semibold text-slate-500">
+                      UGX{" "}
+                      {Number(
+                        referral.commission_amount_ugx || 0
+                      ).toLocaleString()}
+                    </p>
+                  </td>
+
+                  <td className="px-5 py-4">
+                    <span
+                      className={`rounded-full px-2.5 py-1 text-[10px] font-extrabold uppercase ${
+                        referral.status === "completed"
+                          ? "bg-green-100 text-green-700"
+                          : "bg-amber-100 text-amber-700"
+                      }`}
+                    >
+                      {referral.status}
+                    </span>
+                  </td>
+
+                  <td className="px-5 py-4 text-xs text-slate-500">
+                    {new Date(
+                      referral.created_at
+                    ).toLocaleDateString()}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  </section>
+)}
           
 
           {activeSection === "Deposit Settings" && (

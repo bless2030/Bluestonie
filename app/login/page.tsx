@@ -24,64 +24,95 @@ export default function LoginPage() {
   }
 
   async function handleLogin(e: FormEvent<HTMLFormElement>) {
-  e.preventDefault();
+    e.preventDefault();
 
-  setError("");
-  setLoading(true);
+    setError("");
+    setLoading(true);
 
-  // Get plain strings from the form state
-  const loginEmail = String(form.email).trim();
-  const loginPassword = String(form.password);
+    // Get plain strings from the form state
+    const loginEmail = String(form.email).trim();
+    const loginPassword = String(form.password);
 
-  const { error: loginError } =
-    await supabase.auth.signInWithPassword({
-      email: loginEmail,
-      password: loginPassword,
-    });
+    const { error: loginError } =
+      await supabase.auth.signInWithPassword({
+        email: loginEmail,
+        password: loginPassword,
+      });
 
-  if (loginError) {
-    console.error("LOGIN ERROR:", loginError);
-    setError(loginError.message);
-    setLoading(false);
-    return;
+    if (loginError) {
+      console.error("LOGIN ERROR:", loginError);
+      setError(loginError.message);
+      setLoading(false);
+      return;
+    }
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      setError("Unable to identify the logged-in user.");
+      setLoading(false);
+      return;
+    }
+
+    const { data: profile, error: profileError } =
+      await supabase
+        .from("profiles")
+        .select("role, status")
+        .eq("id", user.id)
+        .single();
+
+    if (profileError) {
+      console.error("PROFILE ERROR:", profileError);
+      setError(profileError.message);
+      setLoading(false);
+      return;
+    }
+
+    console.log("PROFILE:", profile);
+
+    // Create referral relationship if the user registered
+    // using a referral code.
+    const referralCode = String(
+      user.user_metadata?.referral_code || ""
+    )
+      .trim()
+      .toUpperCase();
+
+    if (referralCode) {
+      const { data: referral, error: referralError } =
+        await supabase.rpc(
+          "create_referral_relationship",
+          {
+            p_referral_code: referralCode,
+          }
+        );
+
+      if (referralError) {
+        console.error(
+          "REFERRAL ERROR:",
+          referralError
+        );
+      } else {
+        console.log(
+          "REFERRAL RELATIONSHIP:",
+          referral
+        );
+      }
+    }
+
+    if (
+      profile?.role === "admin" &&
+      profile?.status === "active"
+    ) {
+      router.push("/admin");
+      return;
+    }
+
+    router.push("/dashboard");
   }
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    setError("Unable to identify the logged-in user.");
-    setLoading(false);
-    return;
-  }
-
-  const { data: profile, error: profileError } =
-    await supabase
-      .from("profiles")
-      .select("role, status")
-      .eq("id", user.id)
-      .single();
-
-  if (profileError) {
-    console.error("PROFILE ERROR:", profileError);
-    setError(profileError.message);
-    setLoading(false);
-    return;
-  }
-
-  console.log("PROFILE:", profile);
-
-  if (
-    profile?.role === "admin" &&
-    profile?.status === "active"
-  ) {
-    router.push("/admin");
-    return;
-  }
-
-  router.push("/dashboard");
-}
   return (
     <main className="flex min-h-screen items-center justify-center bg-slate-50 px-4 py-8">
       <div className="w-full max-w-md">

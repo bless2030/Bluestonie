@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, type ChangeEvent, type FormEvent } from "react";
+import { useState, useEffect, type ChangeEvent, type FormEvent } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 
 export default function RegisterPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const [form, setForm] = useState({
     fullName: "",
@@ -16,9 +17,18 @@ export default function RegisterPage() {
     confirmPassword: "",
   });
 
+  const [referralCode, setReferralCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    const ref = searchParams.get("ref");
+
+    if (ref) {
+      setReferralCode(ref.trim().toUpperCase());
+    }
+  }, [searchParams]);
 
   function handleChange(e: ChangeEvent<HTMLInputElement>) {
     setForm({
@@ -64,6 +74,7 @@ export default function RegisterPage() {
           full_name: form.fullName.trim(),
           phone: form.phone.trim(),
           country: "Uganda",
+          referral_code: referralCode || null,
         },
       },
     });
@@ -112,6 +123,13 @@ export default function RegisterPage() {
           <p className="mt-2 text-sm leading-6 text-slate-500">
             Create your Bluestonie account to access your dashboard.
           </p>
+
+          {referralCode && (
+            <div className="mt-5 rounded-xl border border-blue-200 bg-blue-50 p-3 text-sm text-blue-700">
+              Referral code:{" "}
+              <span className="font-bold">{referralCode}</span>
+            </div>
+          )}
 
           {error && (
             <div className="mt-5 rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700">
