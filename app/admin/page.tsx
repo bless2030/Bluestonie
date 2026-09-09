@@ -1,5 +1,6 @@
 "use client";
 
+
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -19,6 +20,7 @@ type Toast = {
 const menuItems = [
   "Overview",
   "Deposits",
+  "Deposit Settings",
   "Withdrawals",
   "Users",
   "Packages",
@@ -41,6 +43,13 @@ export default function AdminPage() {
 
   const [toast, setToast] = useState<Toast | null>(null);
   const [search, setSearch] = useState("");
+
+  const [depositMethod, setDepositMethod] = useState("");
+const [depositNumber, setDepositNumber] = useState("");
+const [depositAccountName, setDepositAccountName] = useState("");
+
+const [savingDepositSettings, setSavingDepositSettings] =
+  useState(false);
 
   const showToast = useCallback(
     (type: "success" | "error", message: string) => {
@@ -80,6 +89,96 @@ export default function AdminPage() {
 
     setLoadingDeposits(false);
   }, [showToast]);
+
+const loadDepositSettings = useCallback(async () => {
+  const { data, error } = await supabase
+    .from("system_settings")
+    .select("key, value")
+    .in("key", [
+      "deposit_method",
+      "deposit_number",
+      "deposit_account_name",
+    ]);
+
+  if (error) {
+    console.error(
+      "Failed to load deposit settings:",
+      error
+    );
+
+    showToast("error", error.message);
+    return;
+  }
+
+  data?.forEach((setting) => {
+    if (setting.key === "deposit_method") {
+      setDepositMethod(setting.value || "");
+    }
+
+    if (setting.key === "deposit_number") {
+      setDepositNumber(setting.value || "");
+    }
+
+    if (setting.key === "deposit_account_name") {
+      setDepositAccountName(setting.value || "");
+    }
+  });
+}, [showToast]);
+
+
+
+const saveDepositSettings = useCallback(async () => {
+  setSavingDepositSettings(true);
+
+  const settings = [
+    {
+      key: "deposit_method",
+      value: depositMethod.trim(),
+    },
+    {
+      key: "deposit_number",
+      value: depositNumber.trim(),
+    },
+    {
+      key: "deposit_account_name",
+      value: depositAccountName.trim(),
+    },
+  ];
+
+  for (const setting of settings) {
+    const { error } = await supabase
+      .from("system_settings")
+      .upsert(
+        {
+          key: setting.key,
+          value: setting.value,
+          updated_at: new Date().toISOString(),
+        },
+        {
+          onConflict: "key",
+        }
+      );
+
+    if (error) {
+      console.error("Failed to save setting:", error);
+      showToast("error", error.message);
+      setSavingDepositSettings(false);
+      return;
+    }
+  }
+
+  setSavingDepositSettings(false);
+
+  showToast(
+    "success",
+    "Deposit payment settings saved successfully."
+  );
+}, [
+  depositMethod,
+  depositNumber,
+  depositAccountName,
+  showToast,
+]);
 
   useEffect(() => {
     let cancelled = false;
@@ -138,6 +237,7 @@ export default function AdminPage() {
       </main>
     );
   }
+
 
   const pendingDeposits = deposits.filter(
     (deposit) => deposit.status === "pending"
@@ -367,6 +467,105 @@ export default function AdminPage() {
             />
           )}
 
+          
+
+          {activeSection === "Deposit Settings" && (
+  <DepositSettings
+    depositMethod={depositMethod}
+    setDepositMethod={setDepositMethod}
+    depositNumber={depositNumber}
+    setDepositNumber={setDepositNumber}
+    depositAccountName={depositAccountName}
+    setDepositAccountName={setDepositAccountName}
+    saving={savingDepositSettings}
+    onSave={() => void saveDepositSettings()}
+  />
+)}
+
+{activeSection === "Deposit Settings" && (
+  <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+    <div className="mb-6">
+      <p className="text-xs font-bold uppercase tracking-wide text-blue-600">
+        Payment Configuration
+      </p>
+
+      <h2 className="mt-1 text-xl font-extrabold text-slate-900">
+        Deposit Settings
+      </h2>
+
+      <p className="mt-1 text-sm text-slate-500">
+        Change the payment details displayed to users when
+        they make a deposit.
+      </p>
+    </div>
+
+    <div className="grid gap-5">
+      {/* Deposit Method */}
+      <div>
+        <label className="text-sm font-bold text-slate-700">
+          Deposit Method
+        </label>
+
+        <input
+          type="text"
+          value={depositMethod}
+          onChange={(e) =>
+            setDepositMethod(e.target.value)
+          }
+          placeholder="e.g. Mobile Money"
+          className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-blue-500"
+        />
+      </div>
+
+      {/* Deposit Number */}
+      <div>
+        <label className="text-sm font-bold text-slate-700">
+          Deposit Number
+        </label>
+
+        <input
+          type="text"
+          value={depositNumber}
+          onChange={(e) =>
+            setDepositNumber(e.target.value)
+          }
+          placeholder="e.g. 077XXXXXXX"
+          className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-blue-500"
+        />
+      </div>
+
+      {/* Account Name */}
+      <div>
+        <label className="text-sm font-bold text-slate-700">
+          Account Name
+        </label>
+
+        <input
+          type="text"
+          value={depositAccountName}
+          onChange={(e) =>
+            setDepositAccountName(e.target.value)
+          }
+          placeholder="e.g. John Doe"
+          className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-blue-500"
+        />
+      </div>
+
+      {/* Save */}
+      <button
+        type="button"
+        onClick={() => void saveDepositSettings()}
+        disabled={savingDepositSettings}
+        className="w-full rounded-xl bg-blue-600 px-5 py-3.5 text-sm font-extrabold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60 sm:w-fit"
+      >
+        {savingDepositSettings
+          ? "Saving..."
+          : "Save Deposit Settings"}
+      </button>
+    </div>
+  </section>
+)}
+
           {activeSection === "Withdrawals" && <Withdrawals />}
 
           {activeSection === "Users" && <Users />}
@@ -381,6 +580,109 @@ export default function AdminPage() {
         </div>
       </div>
     </main>
+  );
+}
+
+/* =========================================================
+DEPOSIT SETTINGS
+========================================================= */
+
+function DepositSettings({
+  depositMethod,
+  setDepositMethod,
+  depositNumber,
+  setDepositNumber,
+  depositAccountName,
+  setDepositAccountName,
+  saving,
+  onSave,
+}: {
+  depositMethod: string;
+  setDepositMethod: (value: string) => void;
+  depositNumber: string;
+  setDepositNumber: (value: string) => void;
+  depositAccountName: string;
+  setDepositAccountName: (value: string) => void;
+  saving: boolean;
+  onSave: () => void;
+}) {
+  return (
+    <div>
+      <PageIntro
+        eyebrow="Settings"
+        title="Deposit Settings"
+        description="Manage the payment details displayed to users when they make a deposit."
+      />
+
+      <div className="mt-6 max-w-2xl rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-200 sm:p-6">
+        <div className="space-y-5">
+
+          {/* Deposit Method */}
+          <div>
+            <label className="text-sm font-bold text-slate-700">
+              Deposit Method
+            </label>
+
+            <input
+              type="text"
+              value={depositMethod}
+              onChange={(e) =>
+                setDepositMethod(e.target.value)
+              }
+              placeholder="e.g. Mobile Money"
+              className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-blue-500"
+            />
+          </div>
+
+          {/* Deposit Number */}
+          <div>
+            <label className="text-sm font-bold text-slate-700">
+              Deposit Number
+            </label>
+
+            <input
+              type="text"
+              value={depositNumber}
+              onChange={(e) =>
+                setDepositNumber(e.target.value)
+              }
+              placeholder="e.g. 077XXXXXXX"
+              className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-blue-500"
+            />
+          </div>
+
+          {/* Account Name */}
+          <div>
+            <label className="text-sm font-bold text-slate-700">
+              Account Name
+            </label>
+
+            <input
+              type="text"
+              value={depositAccountName}
+              onChange={(e) =>
+                setDepositAccountName(e.target.value)
+              }
+              placeholder="e.g. John Doe"
+              className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-blue-500"
+            />
+          </div>
+
+          {/* Save */}
+          <button
+            type="button"
+            onClick={onSave}
+            disabled={saving}
+            className="w-full rounded-xl bg-blue-600 px-5 py-3.5 text-sm font-extrabold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+          >
+            {saving
+              ? "Saving..."
+              : "Save Deposit Settings"}
+          </button>
+
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -464,14 +766,26 @@ function Overview({
                 className="flex items-center justify-between gap-3 rounded-xl bg-slate-50 p-3"
               >
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-bold">
-                    {deposit.reference || "Deposit"}
-                  </p>
+  <p className="truncate text-sm font-extrabold text-slate-900">
+    {deposit.profiles?.full_name || "Unknown depositor"}
+  </p>
 
-                  <p className="mt-1 text-xs text-slate-400">
-                    {formatDate(deposit.submitted_at)}
-                  </p>
-                </div>
+  <p className="mt-1 text-xs text-slate-500">
+    {deposit.profiles?.phone || "No phone number"}
+  </p>
+
+  <p className="mt-1 text-xs text-slate-400">
+    {deposit.profiles?.country || "No country"}
+  </p>
+
+  <p className="mt-1 text-xs text-slate-400">
+    Reference: {deposit.reference || "No reference"}
+  </p>
+
+  <p className="mt-1 text-xs text-slate-400">
+    Submitted: {formatDate(deposit.submitted_at)}
+  </p>
+</div>
 
                 <div className="shrink-0 text-right">
                   <p className="font-extrabold">
@@ -733,22 +1047,26 @@ function Deposits({
                   </div>
 
                   <div className="min-w-0">
-                    <p className="break-all font-extrabold">
-                      {deposit.reference || "No reference"}
-                    </p>
+  <p className="truncate font-extrabold text-slate-900">
+    {deposit.profiles?.full_name || "Unknown depositor"}
+  </p>
 
-                    <p className="mt-1 break-all font-mono text-xs text-slate-400">
-                      {deposit.id}
-                    </p>
+  <p className="mt-1 text-xs text-slate-500">
+    {deposit.profiles?.phone || "No phone number"}
+  </p>
 
-                    <p className="mt-1 break-all text-xs text-slate-400">
-                      User: {deposit.user_id}
-                    </p>
+  <p className="mt-1 text-xs text-slate-400">
+    {deposit.profiles?.country || "No country"}
+  </p>
 
-                    <p className="mt-1 text-xs text-slate-400">
-                      Submitted: {formatDate(deposit.submitted_at)}
-                    </p>
-                  </div>
+  <p className="mt-2 break-all text-xs text-slate-400">
+    Reference: {deposit.reference || "No reference"}
+  </p>
+
+  <p className="mt-1 text-xs text-slate-400">
+    Submitted: {formatDate(deposit.submitted_at)}
+  </p>
+</div>
                 </div>
 
                 <div className="lg:text-right">
@@ -1781,42 +2099,112 @@ function DailyTasks() {
 ========================================================= */
 
 function Notices() {
-  const [notices, setNotices] = useState([
-    {
-      title: "Welcome to BLUESTONIE",
-      type: "General",
-      text: "Welcome message shown to subscribers.",
-    },
-    {
-      title: "Daily Activities",
-      type: "Important",
-      text: "Reminder about completing available daily activities.",
-    },
-    {
-      title: "Withdrawal Information",
-      type: "Wallet",
-      text: "Information regarding withdrawal requests.",
-    },
-  ]);
-
+  const [notices, setNotices] = useState<any[]>([]);
   const [title, setTitle] = useState("");
   const [text, setText] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  const addNotice = () => {
-    if (!title.trim() || !text.trim()) return;
+  const loadNotices = async () => {
+    setLoading(true);
+    setError("");
 
-    setNotices((current) => [
-      {
-        title: title.trim(),
-        type: "General",
-        text: text.trim(),
-      },
-      ...current,
-    ]);
+    const { data, error } = await supabase
+      .from("notices")
+      .select(
+        "id,title,message,audience,is_published,published_at,created_at,is_active"
+      )
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      setError(error.message);
+      setNotices([]);
+    } else {
+      setNotices(data || []);
+    }
+
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    void loadNotices();
+  }, []);
+
+  const addNotice = async () => {
+    if (!title.trim()) {
+      setError("Enter a notice title.");
+      return;
+    }
+
+    if (!text.trim()) {
+      setError("Enter a notice message.");
+      return;
+    }
+
+    setSaving(true);
+    setError("");
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      setError("You must be logged in.");
+      setSaving(false);
+      return;
+    }
+
+    const { error } = await supabase.from("notices").insert({
+      title: title.trim(),
+      message: text.trim(),
+      audience: "all",
+      target_user_id: null,
+      recipient_id: null,
+      is_published: true,
+      published_at: new Date().toISOString(),
+      created_by: user.id,
+      is_active: true,
+    });
+
+    if (error) {
+      setError(error.message);
+      setSaving(false);
+      return;
+    }
 
     setTitle("");
     setText("");
+    setSaving(false);
+
+    await loadNotices();
   };
+
+  const deleteNotice = async (id: string) => {
+  setError("");
+
+  const { data, error } = await supabase
+    .from("notices")
+    .update({
+      is_active: false,
+    })
+    .eq("id", id)
+    .select("id,title,is_active");
+
+  console.log("DEACTIVATE RESULT:", { data, error });
+
+  if (error) {
+    setError(error.message);
+    return;
+  }
+
+  if (!data || data.length === 0) {
+    setError("Notice was not updated. No row was returned.");
+    return;
+  }
+
+  await loadNotices();
+};
 
   return (
     <div>
@@ -1825,6 +2213,12 @@ function Notices() {
         title="Subscriber Notices"
         description="Create and manage messages shown to subscribers."
       />
+
+      {error && (
+        <div className="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+          {error}
+        </div>
+      )}
 
       <div className="mt-6 rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-200">
         <h2 className="font-extrabold">Create Notice</h2>
@@ -1848,55 +2242,81 @@ function Notices() {
           <button
             type="button"
             onClick={addNotice}
-            className="rounded-xl bg-blue-600 px-5 py-3 text-sm font-bold text-white hover:bg-blue-700"
+            disabled={saving}
+            className="rounded-xl bg-blue-600 px-5 py-3 text-sm font-bold text-white hover:bg-blue-700 disabled:opacity-60"
           >
-            + Publish Notice
+            {saving ? "Publishing..." : "+ Publish Notice"}
           </button>
         </div>
       </div>
 
       <div className="mt-6 space-y-3">
-        {notices.map((notice, index) => (
-          <div
-            key={`${notice.title}-${index}`}
-            className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-200"
-          >
-            <div className="flex items-start justify-between gap-3">
-              <div className="min-w-0">
-                <div className="flex flex-wrap items-center gap-2">
-                  <h2 className="font-extrabold">
-                    {notice.title}
-                  </h2>
+        {loading ? (
+          <div className="rounded-2xl bg-white p-5 text-sm text-slate-500 shadow-sm ring-1 ring-slate-200">
+            Loading notices...
+          </div>
+        ) : notices.length === 0 ? (
+          <div className="rounded-2xl bg-white p-5 text-center text-sm text-slate-400 shadow-sm ring-1 ring-slate-200">
+            No notices found.
+          </div>
+        ) : (
+          notices.map((notice) => (
+            <div
+              key={notice.id}
+              className={`rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-200 ${
+                !notice.is_active ? "opacity-60" : ""
+              }`}
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <h2 className="font-extrabold">
+                      {notice.title}
+                    </h2>
 
-                  <span className="rounded-full bg-blue-50 px-2.5 py-1 text-[10px] font-bold text-blue-700">
-                    {notice.type}
-                  </span>
+                    <span className="rounded-full bg-blue-50 px-2.5 py-1 text-[10px] font-bold text-blue-700">
+                      {notice.audience || "All"}
+                    </span>
+
+                    <span
+                      className={`rounded-full px-2.5 py-1 text-[10px] font-bold ${
+                        notice.is_active
+                          ? "bg-green-50 text-green-700"
+                          : "bg-slate-100 text-slate-500"
+                      }`}
+                    >
+                      {notice.is_active ? "Active" : "Inactive"}
+                    </span>
+                  </div>
+
+                  <p className="mt-2 text-sm leading-6 text-slate-500">
+                    {notice.message}
+                  </p>
+
+                  <p className="mt-2 text-xs text-slate-400">
+                    {notice.created_at
+                      ? new Date(notice.created_at).toLocaleString()
+                      : ""}
+                  </p>
                 </div>
 
-                <p className="mt-2 text-sm leading-6 text-slate-500">
-                  {notice.text}
-                </p>
+                {notice.is_active && (
+                  <button
+                    type="button"
+                    onClick={() => void deleteNotice(notice.id)}
+                    className="shrink-0 rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-xs font-bold text-red-600"
+                  >
+                    Deactivate
+                  </button>
+                )}
               </div>
-
-              <button
-                type="button"
-                onClick={() =>
-                  setNotices((current) =>
-                    current.filter((_, i) => i !== index)
-                  )
-                }
-                className="shrink-0 rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-xs font-bold text-red-600"
-              >
-                Delete
-              </button>
             </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
     </div>
   );
 }
-
 /* =========================================================
    TRANSACTIONS
 ========================================================= */
@@ -2114,6 +2534,7 @@ function MenuIcon({ item }: { item: string }) {
   const icons: Record<string, string> = {
     Overview: "▦",
     Deposits: "↓",
+    "Deposit Settings": "⚙",
     Withdrawals: "↑",
     Users: "♙",
     Packages: "◇",
@@ -2128,6 +2549,8 @@ function MenuIcon({ item }: { item: string }) {
     </span>
   );
 }
+
+
 
 function getStatusStyle(status: string | null) {
   switch (status?.toLowerCase()) {

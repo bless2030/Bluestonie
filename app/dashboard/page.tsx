@@ -72,6 +72,10 @@ export default function DashboardPage() {
   const [depositUsd, setDepositUsd] = useState("");
   const [depositReference, setDepositReference] = useState("");
 
+  const [depositMethod, setDepositMethod] = useState("");
+const [depositNumber, setDepositNumber] = useState("");
+const [depositAccountName, setDepositAccountName] = useState("");
+
   const [loading, setLoading] = useState(true);
   const [submittingDeposit, setSubmittingDeposit] = useState(false);
   const [submittingWithdrawal, setSubmittingWithdrawal] =
@@ -115,7 +119,10 @@ export default function DashboardPage() {
         completionsResult,
         depositsResult,
         withdrawalsResult,
+        depositSettingsResult,
       ] = await Promise.all([
+
+       
         supabase
           .from("profiles")
           .select("*")
@@ -169,7 +176,19 @@ export default function DashboardPage() {
           .eq("user_id", user.id)
           .order("requested_at", { ascending: false })
           .limit(10),
+
+          supabase
+  .from("system_settings")
+  .select("key, value")
+  .in("key", [
+    "deposit_method",
+    "deposit_number",
+    "deposit_account_name",
+  ]), 
+
+
       ]);
+     
 
       if (profileResult.error) {
         throw new Error(profileResult.error.message);
@@ -190,6 +209,38 @@ export default function DashboardPage() {
       setProfile(profileResult.data as Profile);
       setWallet(walletResult.data as Wallet);
       setPackages((packagesResult.data || []) as Package[]);
+
+      if (!depositSettingsResult.error) {
+  depositSettingsResult.data?.forEach((setting) => {
+    if (setting.key === "deposit_method") {
+      setDepositMethod(setting.value || "");
+    }
+
+    if (setting.key === "deposit_number") {
+      setDepositNumber(setting.value || "");
+    }
+
+    if (setting.key === "deposit_account_name") {
+      setDepositAccountName(setting.value || "");
+    }
+  });
+}
+
+      const depositSettings = depositSettingsResult.data || [];
+
+depositSettings.forEach((setting) => {
+  if (setting.key === "deposit_method") {
+    setDepositMethod(setting.value || "");
+  }
+
+  if (setting.key === "deposit_number") {
+    setDepositNumber(setting.value || "");
+  }
+
+  if (setting.key === "deposit_account_name") {
+    setDepositAccountName(setting.value || "");
+  }
+});
 
       if (!noticesResult.error) {
         setNotices((noticesResult.data || []) as Notice[]);
@@ -741,21 +792,7 @@ const withdrawableProfitUgx = Math.round(
               </button>
             </div>
 
-            <div className="mt-5 rounded-xl bg-slate-50 p-4">
-              <p className="text-sm text-slate-500">
-                Available profit balance
-              </p>
-
-              <p className="mt-1 text-2xl font-extrabold text-blue-700">
-                ${withdrawableProfit.toFixed(2)}
-              </p>
-              <p className="mt-1 text-sm text-slate-500">
-  UGX{" "}
-  {(withdrawableProfit * 4000).toLocaleString(undefined, {
-    maximumFractionDigits: 0,
-  })}
-</p>
-            </div>
+            
 
             <div className="mt-4">
               <label className="text-sm font-bold text-slate-700">
@@ -938,6 +975,44 @@ const withdrawableProfitUgx = Math.round(
                   </div>
                 </div>
 
+                <div className="mt-5 rounded-2xl border border-blue-100 bg-blue-50 p-4">
+  <p className="text-sm font-extrabold text-blue-900">
+    Payment Instructions
+  </p>
+
+  <p className="mt-1 text-xs leading-5 text-blue-700">
+    Send your deposit using the payment details below.
+  </p>
+
+  <div className="mt-4 space-y-3">
+    <div className="rounded-xl bg-white p-3">
+      <p className="text-xs font-semibold text-slate-400">
+        Payment Method
+      </p>
+      <p className="mt-1 font-extrabold text-slate-900">
+        {depositMethod || "NOT LOADED"}
+      </p>
+    </div>
+
+    <div className="rounded-xl bg-white p-3">
+      <p className="text-xs font-semibold text-slate-400">
+        Send Payment To
+      </p>
+      <p className="mt-1 text-lg font-extrabold text-blue-700">
+        {depositNumber || "NOT LOADED"}
+      </p>
+    </div>
+
+    <div className="rounded-xl bg-white p-3">
+      <p className="text-xs font-semibold text-slate-400">
+        Account Name
+      </p>
+      <p className="mt-1 font-extrabold text-slate-900">
+        {depositAccountName || "NOT LOADED"}
+      </p>
+    </div>
+  </div>
+</div>
                 <div className="mt-4 grid gap-4 sm:grid-cols-2">
                   <div>
                     <label className="text-sm font-bold text-slate-700">

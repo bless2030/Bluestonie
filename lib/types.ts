@@ -44,7 +44,18 @@ export type Deposit = {
   reviewed_by?: string | null;
   admin_note?: string | null;
   submitted_at: string;
+
+profiles?: {
+    id: string;
+    full_name: string | null;
+    phone: string | null;
+    country: string | null;
+    role: string | null;
+    status: string | null;
+    created_at: string | null;
+  } | null;
 };
+
 
 export type Task = {
   id: string;
