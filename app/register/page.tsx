@@ -1,11 +1,18 @@
 "use client";
 
-import { useState, useEffect, type ChangeEvent, type FormEvent } from "react";
+import {
+  Suspense,
+  useState,
+  useEffect,
+  type ChangeEvent,
+  type FormEvent,
+} from "react";
+
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 
-export default function RegisterPage() {
+function RegisterForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -276,5 +283,19 @@ export default function RegisterPage() {
         </p>
       </div>
     </main>
+  );
+
+}
+export default function RegisterPage() {
+  return (
+    <Suspense
+      fallback={
+        <main className="flex min-h-screen items-center justify-center bg-slate-50 px-4">
+          <p className="text-sm text-slate-500">Loading...</p>
+        </main>
+      }
+    >
+      <RegisterForm />
+    </Suspense>
   );
 }
