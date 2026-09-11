@@ -161,7 +161,7 @@ function RegisterForm() {
             <div>
               <label
                 htmlFor="fullName"
-                className="text-sm font-semibold text-slate-700"
+                className="text-sm font-semibold text-slate-700 dark:text-slate-200"
               >
                 Full name
               </label>
@@ -182,7 +182,7 @@ function RegisterForm() {
             <div>
               <label
                 htmlFor="phone"
-                className="text-sm font-semibold text-slate-700"
+                className="text-sm font-semibold text-slate-700 dark:text-slate-200"
               >
                 Phone number
               </label>
@@ -203,7 +203,7 @@ function RegisterForm() {
             <div>
               <label
                 htmlFor="email"
-                className="text-sm font-semibold text-slate-700"
+                className="text-sm font-semibold text-slate-700 dark:text-slate-200"
               >
                 Email address
               </label>
@@ -224,7 +224,7 @@ function RegisterForm() {
             <div>
               <label
                 htmlFor="password"
-                className="text-sm font-semibold text-slate-700"
+                className="text-sm font-semibold text-slate-700 dark:text-slate-200"
               >
                 Password
               </label>
@@ -245,7 +245,7 @@ function RegisterForm() {
             <div>
               <label
                 htmlFor="confirmPassword"
-                className="text-sm font-semibold text-slate-700"
+                className="text-sm font-semibold text-slate-700 dark:text-slate-200"
               >
                 Confirm password
               </label>
