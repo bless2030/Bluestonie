@@ -174,7 +174,7 @@ function RegisterForm() {
                 onChange={handleChange}
                 placeholder="Enter your full name"
                 autoComplete="name"
-                className="mt-2 w-full rounded-xl border border-slate-300 px-4 py-3 text-base outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-base text-slate-900 outline-none placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-600 dark:bg-[#0B1120] dark:text-white dark:placeholder:text-slate-300 dark:focus:border-blue-400 dark:focus:ring-2 dark:focus:ring-blue-950"
               />
             </div>
 
@@ -195,7 +195,7 @@ function RegisterForm() {
                 onChange={handleChange}
                 placeholder="e.g. 0700 000 000"
                 autoComplete="tel"
-                className="mt-2 w-full rounded-xl border border-slate-300 px-4 py-3 text-base outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-base text-slate-900 outline-none placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-600 dark:bg-[#0B1120] dark:text-white dark:placeholder:text-slate-300 dark:focus:border-blue-400 dark:focus:ring-2 dark:focus:ring-blue-950"
               />
             </div>
 
@@ -216,7 +216,7 @@ function RegisterForm() {
                 onChange={handleChange}
                 placeholder="you@example.com"
                 autoComplete="email"
-                className="mt-2 w-full rounded-xl border border-slate-300 px-4 py-3 text-base outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-base text-slate-900 outline-none placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-600 dark:bg-[#0B1120] dark:text-white dark:placeholder:text-slate-300 dark:focus:border-blue-400 dark:focus:ring-2 dark:focus:ring-blue-950"
               />
             </div>
 
@@ -237,7 +237,7 @@ function RegisterForm() {
                 onChange={handleChange}
                 placeholder="Create a password"
                 autoComplete="new-password"
-                className="mt-2 w-full rounded-xl border border-slate-300 px-4 py-3 text-base outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-base text-slate-900 outline-none placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-600 dark:bg-[#0B1120] dark:text-white dark:placeholder:text-slate-300 dark:focus:border-blue-400 dark:focus:ring-2 dark:focus:ring-blue-950"
               />
             </div>
 
@@ -258,7 +258,7 @@ function RegisterForm() {
                 onChange={handleChange}
                 placeholder="Confirm your password"
                 autoComplete="new-password"
-                className="mt-2 w-full rounded-xl border border-slate-300 px-4 py-3 text-base outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-base text-slate-900 outline-none placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-600 dark:bg-[#0B1120] dark:text-white dark:placeholder:text-slate-300 dark:focus:border-blue-400 dark:focus:ring-2 dark:focus:ring-blue-950"
               />
             </div>
 
