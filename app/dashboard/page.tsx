@@ -230,6 +230,12 @@ supabase
       }
 
       setProfile(profileResult.data as Profile);
+
+await supabase
+  .from("profiles")
+  .update({ updated_at: new Date().toISOString() })
+  .eq("id", user.id);
+
 setWallet(walletResult.data as Wallet);
 setPackages((packagesResult.data || []) as Package[]);
 
@@ -711,6 +717,17 @@ const withdrawableProfitUgx = Math.round(
             <h1 className="text-lg font-extrabold text-blue-700">
               {profile?.full_name || "Member"}
             </h1>
+{profile?.created_at && (
+  <p className="mt-1 text-xs text-slate-400">
+    Joined{" "}
+    {new Date(profile.created_at).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    })}
+  </p>
+)}
+
           </div>
 
           <button

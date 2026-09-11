@@ -28,6 +28,7 @@ function RegisterForm() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
 
   useEffect(() => {
     const ref = searchParams.get("ref");
@@ -70,6 +71,11 @@ function RegisterForm() {
       setError("Password must contain at least 6 characters.");
       return;
     }
+
+    if (!agreedToTerms) {
+  setError("Please agree to the Terms & Conditions and applicable policies.");
+  return;
+}
 
     setLoading(true);
 
@@ -255,6 +261,56 @@ function RegisterForm() {
                 className="mt-2 w-full rounded-xl border border-slate-300 px-4 py-3 text-base outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
               />
             </div>
+
+            {/* Terms and agreement */}
+<label className="flex items-start gap-3 text-sm leading-5 text-slate-600">
+  <input
+    type="checkbox"
+    checked={agreedToTerms}
+    onChange={(e) => setAgreedToTerms(e.target.checked)}
+    className="mt-1 h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+  />
+
+  <span>
+    I confirm that I have read and agree to the{" "}
+    <Link
+      href="/terms"
+      className="font-semibold text-blue-600 hover:text-blue-700"
+    >
+      Terms & Conditions
+    </Link>
+    ,{" "}
+    <Link
+      href="/privacy"
+      className="font-semibold text-blue-600 hover:text-blue-700"
+    >
+      Privacy Policy
+    </Link>
+    ,{" "}
+    <Link
+      href="/risk-disclosure"
+      className="font-semibold text-blue-600 hover:text-blue-700"
+    >
+      Risk Disclosure
+    </Link>
+    ,{" "}
+    <Link
+      href="/deposit-withdrawal-policy"
+      className="font-semibold text-blue-600 hover:text-blue-700"
+    >
+      Deposit & Withdrawal Policy
+    </Link>
+    , and{" "}
+    <Link
+      href="/referral-terms"
+      className="font-semibold text-blue-600 hover:text-blue-700"
+    >
+      Referral Terms
+    </Link>
+    . I confirm that the information I have provided is accurate and that I
+    understand the risks associated with using BLUESTONIE Investments.
+  </span>
+</label>
 
             {/* Submit */}
             <button
