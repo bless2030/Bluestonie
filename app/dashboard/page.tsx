@@ -83,6 +83,8 @@ export default function DashboardPage() {
   const [withdrawPaymentDetails, setWithdrawPaymentDetails] =
     useState("");
 
+const [sidebarOpen, setSidebarOpen] = useState(false);
+
   const [depositUsd, setDepositUsd] = useState("");
   const [depositReference, setDepositReference] = useState("");
 
@@ -404,6 +406,8 @@ depositSettings.forEach((setting) => {
       return;
     }
 
+    
+
     const minimum = Number(selectedPackage.min_usd);
     const maximum = Number(selectedPackage.max_usd);
 
@@ -455,7 +459,7 @@ depositSettings.forEach((setting) => {
     setDepositReference("");
 
     setMessage(
-      "Deposit request submitted successfully. It is now awaiting admin review."
+      "Deposit request submitted successfully. It is now awaiting admin review. Deposit can take upto 48hours to reflect"
     );
 
     await loadDashboard();
@@ -705,30 +709,207 @@ const withdrawableProfitUgx = Math.round(
   }
 
   return (
-    <main className="min-h-screen bg-slate-50">
+    <main className="min-h-screen bg-slate-50 lg:pl-72">
+
+{/* MOBILE SIDEBAR OVERLAY */}
+{sidebarOpen && (
+  <div
+    className="fixed inset-0 z-40 bg-black/40 lg:hidden"
+    onClick={() => setSidebarOpen(false)}
+  />
+)}
+
+{/* SIDEBAR */}
+<aside
+  className={`fixed inset-y-0 left-0 z-50 w-72 transform bg-slate-900 shadow-xl transition-transform duration-300 lg:translate-x-0 ${
+    sidebarOpen ? "translate-x-0" : "-translate-x-full"
+  }`}
+>
+  <div className="flex h-full flex-col">
+    {/* SIDEBAR HEADER */}
+    <div className="border-b border-slate-200 px-5 py-5">
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-lg font-extrabold text-blue-700">
+            BLUESTONIE
+          </p>
+          <p className="mt-1 text-xs font-semibold text-slate-400">
+            USER DASHBOARD
+          </p>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => setSidebarOpen(false)}
+          className="rounded-lg border border-slate-200 px-3 py-2 text-sm font-bold text-slate-600 hover:bg-slate-800 lg:hidden"
+        >
+          Close
+        </button>
+      </div>
+    </div>
+
+    {/* USER INFO */}
+    <div className="border-b border-slate-200 px-5 py-4">
+      <p className="text-sm font-extrabold text-slate-300">
+        {profile?.full_name || "Member"}
+      </p>
+
+      <p className="mt-1 text-xs text-green-600">
+        Active Account
+      </p>
+
+      {profile?.created_at && (
+        <p className="mt-1 text-xs text-slate-400">
+          Joined{" "}
+          {new Date(profile.created_at).toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+          })}
+        </p>
+      )}
+    </div>
+
+    {/* NAVIGATION */}
+    <nav className="flex-1 overflow-y-auto px-3 py-4">
+
+      <p className="px-3 pb-2 text-[11px] font-bold uppercase tracking-wider text-slate-300">
+  Overview
+</p>
+
+<button
+  type="button"
+  onClick={() => {
+    setSidebarOpen(false);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }}
+  className="w-full rounded-lg bg-blue-700 px-3 py-3 text-left text-sm font-bold text-white"
+>
+  Dashboard
+</button>
+
+<button
+  type="button"
+  onClick={() => {
+    setSidebarOpen(false);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }}
+  className="w-full rounded-lg px-3 py-3 text-left text-sm font-semibold text-white hover:bg-slate-800"
+>
+  Transactions
+</button>
+
+<button
+  type="button"
+  onClick={() => {
+    setSidebarOpen(false);
+    packageSectionRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  }}
+  className="w-full rounded-lg px-3 py-3 text-left text-sm font-semibold text-white hover:bg-slate-800"
+>
+  Packages
+</button>
+
+<button
+  type="button"
+  onClick={() => setSidebarOpen(false)}
+  className="w-full rounded-lg px-3 py-3 text-left text-sm font-semibold text-white hover:bg-slate-800"
+>
+  Daily Activities
+</button>
+
+<p className="mt-5 px-3 pb-2 text-[11px] font-bold uppercase tracking-wider text-slate-300">
+  Referrals
+</p>
+
+<button
+  type="button"
+  onClick={() => setSidebarOpen(false)}
+  className="w-full rounded-lg px-3 py-3 text-left text-sm font-semibold text-white hover:bg-slate-800"
+>
+  My Referrals
+</button>
+
+<p className="mt-5 px-3 pb-2 text-[11px] font-bold uppercase tracking-wider text-slate-300">
+  Information
+</p>
+
+<button
+  type="button"
+  onClick={() => setSidebarOpen(false)}
+  className="w-full rounded-lg px-3 py-3 text-left text-sm font-semibold text-white hover:bg-slate-800"
+>
+  Notices
+</button>
+
+<button
+  type="button"
+  onClick={() => {
+  setSidebarOpen(false);
+  router.push("/support");
+}}
+  className="w-full rounded-lg px-3 py-3 text-left text-sm font-semibold text-white hover:bg-slate-800"
+>
+  Support
+</button>
+
+<button
+  type="button"
+  onClick={() => {
+  setSidebarOpen(false);
+  router.push("/terms");
+}}
+  className="w-full rounded-lg px-3 py-3 text-left text-sm font-semibold text-white hover:bg-slate-800"
+>
+  Terms & Policies
+</button>
+    </nav>
+
+    {/* SIDEBAR FOOTER */}
+    <div className="border-t border-slate-200 p-3">
+      <button
+        type="button"
+        onClick={() => router.push("/")}
+        className="w-full rounded-lg px-3 py-3 text-left text-sm font-semibold text-slate-400 hover:bg-slate-800"
+      >
+        Public Website
+      </button>
+
+      <button
+        type="button"
+        onClick={handleLogout}
+        className="mt-1 w-full rounded-lg px-3 py-3 text-left text-sm font-bold text-red-600 hover:bg-red-50"
+      >
+        Logout
+      </button>
+    </div>
+  </div>
+</aside>
+
       {/* HEADER */}
       <header className="border-b border-slate-200 bg-white">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6">
           <div>
-            <p className="text-xs font-medium text-slate-500">
-              Welcome back
-            </p>
-
-            <h1 className="text-lg font-extrabold text-blue-700">
-              {profile?.full_name || "Member"}
-            </h1>
-{profile?.created_at && (
-  <p className="mt-1 text-xs text-slate-400">
-    Joined{" "}
-    {new Date(profile.created_at).toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    })}
+<button
+  type="button"
+  onClick={() => setSidebarOpen(true)}
+  className="rounded-lg border border-slate-200 px-3 py-2 text-lg font-bold text-slate-700 hover:bg-slate-800
+   lg:hidden"
+  aria-label="Open menu"
+>
+  ☰
+</button>
+        
+  <p className="text-lg font-extrabold text-slate-800">
+    Dashboard
   </p>
-)}
-
-          </div>
+  <p className="mt-1 text-xs text-slate-900">
+    Manage your BLUESTONIE account and investments.
+  </p>
+</div>
 
           <button
             onClick={handleLogout}
@@ -741,24 +922,17 @@ const withdrawableProfitUgx = Math.round(
 
       <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6">
         {/* TOP ACCOUNT AREA */}
-        <section className="rounded-3xl bg-blue-600 p-5 text-white shadow-lg sm:p-6">
+        <section className="rounded-3xl bg-slate-900 p-5 text-white shadow-lg sm:p-6">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
             <div>
-              <div className="mt-5 rounded-xl bg-slate-50 p-4">
-  <p className="text-sm text-slate-500">
+              <div className="mt-5 rounded-xl bg-slate-800 p-4">
+  <p className="text-sm text-slate-200">
     Available profit balance
   </p>
 
   <p className="mt-1 text-2xl font-extrabold text-blue-700">
     ${withdrawableProfit.toFixed(2)}
   </p>
-<p className="mt-1 text-sm text-blue-100">
-          UGX{" "}
-          {(withdrawableProfit * 4000).toLocaleString(undefined, {
-            maximumFractionDigits: 0,
-          })}
-        </p>
-
 </div>
               <p className="mt-1 text-sm text-blue-100">
                 UGX{" "}
@@ -1008,7 +1182,7 @@ const withdrawableProfitUgx = Math.round(
               A 5% withdrawal fee applies. Once a
               request is submitted, that amount should
               remain reserved until the request is
-              approved or rejected.
+              approved or rejected. Withdrawal can take upto 48hrs to be completed.
             </p>
           </section>
         )}
@@ -1090,13 +1264,30 @@ const withdrawableProfitUgx = Math.round(
     </div>
 
     <div className="rounded-xl bg-white p-3">
-      <p className="text-xs font-semibold text-slate-400">
-        Send Payment To
-      </p>
-      <p className="mt-1 text-lg font-extrabold text-blue-700">
-        {depositNumber || "NOT LOADED"}
-      </p>
-    </div>
+  <p className="text-xs font-semibold text-slate-400">
+    Send Payment To
+  </p>
+
+  <div className="mt-1 flex items-center justify-between gap-3">
+    <p className="text-lg font-extrabold text-blue-700">
+      {depositNumber || "NOT LOADED"}
+    </p>
+
+    {depositNumber && (
+      <button
+        type="button"
+        onClick={async () => {
+          await navigator.clipboard.writeText(depositNumber);
+          alert("Deposit number copied!");
+        }}
+        className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-800"
+      >
+        Copy
+      </button>
+    )}
+  </div>
+
+  </div>
 
     <div className="rounded-xl bg-white p-3">
       <p className="text-xs font-semibold text-slate-400">
@@ -1131,6 +1322,12 @@ const withdrawableProfitUgx = Math.round(
                       placeholder="Enter amount"
                       className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-blue-500"
                     />
+                    {depositUsd && Number(depositUsd) > 0 && (
+  <p className="mt-2 text-sm font-semibold text-slate-600 dark:text-slate-300">
+    Amount to send: UGX{" "}
+    {(Number(depositUsd) * 4000).toLocaleString()}
+  </p>
+)}
                   </div>
 
                   <div>
@@ -1146,9 +1343,11 @@ const withdrawableProfitUgx = Math.round(
                           e.target.value
                         )
                       }
+                      
                       placeholder="e.g. transaction number"
                       className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-blue-500"
                     />
+                    
                   </div>
                 </div>
 
@@ -1502,7 +1701,7 @@ const withdrawableProfitUgx = Math.round(
                       className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-extrabold ${
                         completed
                           ? "bg-green-100 text-green-700"
-                          : "bg-blue-50 text-blue-700"
+                          : "bg-blue-700 text-white"
                       }`}
                     >
                       {completed

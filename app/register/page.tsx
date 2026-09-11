@@ -106,7 +106,7 @@ function RegisterForm() {
     }
 
     setMessage(
-      "Account created successfully. Please check your email to confirm your account."
+      "Account created successfully. Please check your email to confirm your account. If you do not see theverification email in your inbox, please check your Spam, Junk,or Promotions folder. "
     );
   }
 

@@ -23,15 +23,24 @@ const packages = [
   },
 ];
 
+const accountFeatures = [
+  "Wallet",
+  "Deposits",
+  "Withdrawals",
+  "Transactions",
+  "Daily Activities",
+  "Referrals",
+];
+
 export default function HomePage() {
   return (
-    <main className="min-h-screen bg-white text-slate-900">
+    <main className="min-h-screen bg-[#F7F8FA] text-[#0F172A] dark:bg-[#0B1120] dark:text-slate-100">
       {/* Header */}
-      <header className="sticky top-0 z-50 border-b border-slate-100 bg-white/95 backdrop-blur">
+      <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 dark:border-slate-800 dark:bg-[#0B1120]/95">
         <div className="mx-auto flex min-h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
           <Link
             href="/"
-            className="text-xl font-extrabold tracking-tight text-blue-700 sm:text-2xl"
+            className="text-xl font-extrabold tracking-tight text-[#0F172A] dark:text-white sm:text-2xl"
           >
             BLUESTONIE
           </Link>
@@ -39,209 +48,186 @@ export default function HomePage() {
           <nav className="hidden items-center gap-7 md:flex">
             <a
               href="#how-it-works"
-              className="text-sm font-medium text-slate-600 hover:text-blue-700"
+              className="text-sm font-medium text-slate-600 hover:text-[#2563EB] dark:text-slate-300 dark:hover:text-blue-400"
             >
               How It Works
             </a>
 
             <a
               href="#packages"
-              className="text-sm font-medium text-slate-600 hover:text-blue-700"
+              className="text-sm font-medium text-slate-600 hover:text-[#2563EB] dark:text-slate-300 dark:hover:text-blue-400"
             >
               Packages
             </a>
 
             <a
-              href="#tasks"
-              className="text-sm font-medium text-slate-600 hover:text-blue-700"
+              href="#account"
+              className="text-sm font-medium text-slate-600 hover:text-[#2563EB] dark:text-slate-300 dark:hover:text-blue-400"
             >
-              Daily Activities
+              Account
             </a>
 
-            <a
-              href="#faq"
-              className="text-sm font-medium text-slate-600 hover:text-blue-700"
+            <Link
+              href="/support"
+              className="text-sm font-medium text-slate-600 hover:text-[#2563EB] dark:text-slate-300 dark:hover:text-blue-400"
             >
-              FAQ
-            </a>
+              Support
+            </Link>
           </nav>
 
           <div className="flex items-center gap-2">
             <Link
               href="/login"
-              className="hidden rounded-xl px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 sm:block"
+              className="hidden rounded-lg px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800 sm:block"
             >
               Login
             </Link>
 
             <Link
               href="/register"
-              className="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-bold text-white shadow-sm hover:bg-blue-700"
+              className="rounded-lg bg-[#2563EB] px-4 py-2.5 text-sm font-bold text-white hover:bg-[#1D4ED8]"
             >
-              Get Started
+              Create Account
             </Link>
           </div>
         </div>
       </header>
 
       {/* Hero */}
-      <section className="overflow-hidden bg-gradient-to-b from-blue-50 via-white to-white">
-        <div className="mx-auto grid max-w-7xl items-center gap-10 px-4 py-14 sm:px-6 sm:py-20 lg:grid-cols-2 lg:py-24">
+      <section className="border-b border-slate-200 bg-[#F7F8FA] dark:border-slate-800 dark:bg-[#0B1120]">
+        <div className="mx-auto grid max-w-7xl gap-12 px-4 py-16 sm:px-6 sm:py-20 lg:grid-cols-2 lg:items-center lg:py-24">
           <div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-blue-100 bg-white px-3 py-1.5 text-xs font-bold text-blue-700 shadow-sm">
-              <span className="h-2 w-2 rounded-full bg-blue-500" />
-              Simple. Structured. Digital.
-            </div>
-
-            <h1 className="mt-5 text-4xl font-extrabold tracking-tight text-slate-950 sm:text-5xl lg:text-6xl">
-              Manage your financial activities in one place.
-            </h1>
-
-            <p className="mt-5 max-w-xl text-base leading-7 text-slate-600 sm:text-lg">
-              BLUESTONIE provides a simple digital platform where
-              subscribers can manage their account, complete daily
-              activities, monitor balances and view transaction
-              history.
+            <p className="text-sm font-bold uppercase tracking-[0.15em] text-[#2563EB]">
+              BLUESTONIE
             </p>
 
-            <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+            <h1 className="mt-4 max-w-2xl text-4xl font-extrabold leading-tight tracking-tight text-[#0F172A] dark:text-white sm:text-5xl lg:text-6xl">
+              A simple digital investment account experience.
+            </h1>
+
+            <p className="mt-5 max-w-xl text-base leading-7 text-slate-600 dark:text-slate-300 sm:text-lg">
+              Manage your account, investment packages, daily activities,
+              deposits, withdrawals and transactions from one dashboard.
+            </p>
+
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link
                 href="/register"
-                className="rounded-xl bg-blue-600 px-6 py-3.5 text-center text-sm font-bold text-white shadow-lg shadow-blue-100 hover:bg-blue-700"
+                className="rounded-lg bg-[#2563EB] px-6 py-3.5 text-center text-sm font-bold text-white hover:bg-[#1D4ED8]"
               >
                 Create Account
               </Link>
 
               <Link
                 href="/login"
-                className="rounded-xl border border-slate-200 bg-white px-6 py-3.5 text-center text-sm font-bold text-slate-700 hover:bg-slate-50"
+                className="rounded-lg border border-slate-300 bg-white px-6 py-3.5 text-center text-sm font-bold text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:bg-[#111827] dark:text-slate-200 dark:hover:bg-slate-800"
               >
                 Sign In
               </Link>
             </div>
-
-            <div className="mt-7 flex flex-wrap gap-x-6 gap-y-2 text-xs text-slate-500">
-              <span>✓ Mobile friendly</span>
-              <span>✓ Account dashboard</span>
-              <span>✓ Transaction history</span>
-            </div>
           </div>
 
-          {/* Hero card */}
-          <div className="relative">
-            <div className="absolute -inset-6 rounded-full bg-blue-100/60 blur-3xl" />
+          {/* Account Preview */}
+          <div className="lg:pl-8">
+            <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-[#111827] sm:p-7">
+              <div className="border-b border-slate-200 pb-5 dark:border-slate-700">
+                <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+                  Account Overview
+                </p>
 
-            <div className="relative rounded-3xl border border-blue-100 bg-white p-4 shadow-2xl shadow-blue-100 sm:p-6">
-              <div className="rounded-2xl bg-slate-50 p-4 sm:p-5">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-xs text-slate-400">
-                      Account Overview
-                    </p>
+                <p className="mt-2 text-3xl font-extrabold text-[#0F172A] dark:text-white">
+                  Manage Everything
+                </p>
 
-                    <p className="mt-1 text-2xl font-extrabold">
-                      $150.00
-                    </p>
-                  </div>
+                <p className="mt-2 text-sm leading-6 text-slate-500 dark:text-slate-400">
+                  Your subscriber dashboard brings your account information
+                  together in one place.
+                </p>
+              </div>
 
-                  <span className="rounded-full bg-green-50 px-3 py-1 text-xs font-bold text-green-700">
-                    Active
-                  </span>
-                </div>
+              <div className="mt-5 grid grid-cols-2 gap-3">
+                <div className="rounded-xl border border-slate-200 bg-[#F7F8FA] p-4 dark:border-slate-700 dark:bg-[#0B1120]">
+                  <p className="text-xs text-slate-400">Packages</p>
 
-                <div className="mt-5 grid grid-cols-2 gap-3">
-                  <div className="rounded-xl bg-white p-4">
-                    <p className="text-xs text-slate-400">
-                      Package
-                    </p>
-
-                    <p className="mt-1 font-bold">
-                      Premium
-                    </p>
-                  </div>
-
-                  <div className="rounded-xl bg-white p-4">
-                    <p className="text-xs text-slate-400">
-                      Daily activity
-                    </p>
-
-                    <p className="mt-1 font-bold">
-                      3 / 5
-                    </p>
-                  </div>
-                </div>
-
-                <div className="mt-3 rounded-xl bg-blue-600 p-4 text-white">
-                  <p className="text-xs text-blue-100">
-                    Account activity
+                  <p className="mt-1 text-xl font-extrabold text-[#0F172A] dark:text-white">
+                    4
                   </p>
+                </div>
 
-                  <div className="mt-2 flex items-end justify-between">
-                    <p className="text-2xl font-extrabold">
-                      $4.50
-                    </p>
+                <div className="rounded-xl border border-slate-200 bg-[#F7F8FA] p-4 dark:border-slate-700 dark:bg-[#0B1120]">
+                  <p className="text-xs text-slate-400">Activities</p>
 
-                    <span className="text-xs text-blue-100">
-                      Today
-                    </span>
-                  </div>
+                  <p className="mt-1 text-xl font-extrabold text-[#0F172A] dark:text-white">
+                    5
+                  </p>
+                </div>
+
+                <div className="rounded-xl border border-slate-200 bg-[#F7F8FA] p-4 dark:border-slate-700 dark:bg-[#0B1120]">
+                  <p className="text-xs text-slate-400">Transactions</p>
+
+                  <p className="mt-1 text-xl font-extrabold text-[#0F172A] dark:text-white">
+                    History
+                  </p>
+                </div>
+
+                <div className="rounded-xl border border-slate-200 bg-[#F7F8FA] p-4 dark:border-slate-700 dark:bg-[#0B1120]">
+                  <p className="text-xs text-slate-400">Account</p>
+
+                  <p className="mt-1 text-xl font-extrabold text-[#0F172A] dark:text-white">
+                    Dashboard
+                  </p>
                 </div>
               </div>
 
-              <div className="mt-4 grid grid-cols-3 gap-2">
-                <MiniCard text="Wallet" icon="💰" />
-                <MiniCard text="Tasks" icon="✓" />
-                <MiniCard text="History" icon="📜" />
-              </div>
+              <Link
+                href="/register"
+                className="mt-5 block rounded-lg bg-[#0F172A] px-5 py-3 text-center text-sm font-bold text-white hover:bg-[#1E293B] dark:bg-white dark:text-[#0F172A] dark:hover:bg-slate-200"
+              >
+                Open Your Account
+              </Link>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Stats */}
-      <section className="border-y border-slate-100 bg-white">
-        <div className="mx-auto grid max-w-7xl grid-cols-2 divide-x divide-slate-100 px-4 sm:px-6 md:grid-cols-4">
+      {/* Quick Information */}
+      <section className="border-b border-slate-200 bg-white dark:border-slate-800 dark:bg-[#111827]">
+        <div className="mx-auto grid max-w-7xl grid-cols-2 md:grid-cols-4">
           <Stat value="$10" label="Starting amount" />
           <Stat value="$500" label="Maximum amount" />
           <Stat value="5" label="Daily activities" />
-          <Stat value="4" label="Account packages" />
+          <Stat value="4" label="Packages" />
         </div>
       </section>
 
-      {/* How it works */}
+      {/* How It Works */}
       <section
         id="how-it-works"
         className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20"
       >
         <SectionHeading
           eyebrow="How It Works"
-          title="A simple account experience"
-          description="The platform is designed around a straightforward user journey."
+          title="Getting started is straightforward."
+          description="BLUESTONIE is organized around a simple account journey."
         />
 
-        <div className="mt-10 grid gap-4 md:grid-cols-4">
+        <div className="mt-10 grid gap-4 md:grid-cols-3">
           <Step
             number="01"
             title="Create Account"
-            text="Register and create your subscriber account."
+            text="Register your account and complete the required verification."
           />
 
           <Step
             number="02"
-            title="Choose Package"
-            text="Select an available package and account amount."
+            title="Choose a Package"
+            text="Review the available packages and select an option available to you."
           />
 
           <Step
             number="03"
-            title="Complete Activities"
-            text="Complete the available daily activities on your dashboard."
-          />
-
-          <Step
-            number="04"
-            title="Monitor Account"
-            text="View your wallet, account activity and transaction history."
+            title="Manage Your Account"
+            text="Use your dashboard to monitor activities, balances and transactions."
           />
         </div>
       </section>
@@ -249,227 +235,173 @@ export default function HomePage() {
       {/* Packages */}
       <section
         id="packages"
-        className="bg-slate-50 px-4 py-16 sm:px-6 sm:py-20"
+        className="border-y border-slate-200 bg-white px-4 py-16 dark:border-slate-800 dark:bg-[#111827] sm:px-6 sm:py-20"
       >
         <div className="mx-auto max-w-7xl">
           <SectionHeading
             eyebrow="Packages"
-            title="Choose an account package"
-            description="Available package ranges are displayed clearly inside the subscriber dashboard."
+            title="Available investment packages."
+            description="The following package ranges and displayed rates are currently configured on the platform."
           />
 
           <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {packages.map((pkg, index) => (
               <div
                 key={pkg.name}
-                className={`rounded-2xl bg-white p-5 shadow-sm ring-1 ${
+                className={`rounded-2xl border bg-[#F7F8FA] p-5 dark:bg-[#0B1120] ${
                   index === 2
-                    ? "ring-2 ring-blue-500"
-                    : "ring-slate-200"
+                    ? "border-[#2563EB] dark:border-blue-500"
+                    : "border-slate-200 dark:border-slate-700"
                 }`}
               >
                 {index === 2 && (
-                  <span className="rounded-full bg-blue-50 px-3 py-1 text-[11px] font-bold text-blue-700">
+                  <p className="text-xs font-bold uppercase tracking-wider text-[#2563EB] dark:text-blue-400">
                     Popular
-                  </span>
+                  </p>
                 )}
 
-                <h3 className="mt-3 text-xl font-extrabold">
+                <p className="mt-2 text-sm font-bold text-[#2563EB] dark:text-blue-400">
                   {pkg.name}
-                </h3>
+                </p>
 
-                <p className="mt-3 text-2xl font-extrabold text-blue-700">
+                <p className="mt-4 text-2xl font-extrabold text-[#0F172A] dark:text-white">
                   {pkg.range}
                 </p>
 
-                <div className="mt-5 rounded-xl bg-slate-50 p-3">
+                <div className="mt-5 border-t border-slate-200 pt-4 dark:border-slate-700">
                   <p className="text-xs text-slate-400">
-                    Stated package rate
+                    Displayed package rate
                   </p>
 
-                  <p className="mt-1 font-bold">
+                  <p className="mt-1 text-lg font-extrabold text-[#0F172A] dark:text-white">
                     {pkg.rate}
                   </p>
                 </div>
 
                 <Link
                   href="/register"
-                  className="mt-5 block rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-center text-sm font-bold text-blue-700 hover:bg-blue-100"
+                  className="mt-5 block rounded-lg border border-[#BFDBFE] bg-[#EFF6FF] px-4 py-3 text-center text-sm font-bold text-[#2563EB] hover:bg-[#DBEAFE] dark:border-blue-900 dark:bg-blue-950/40 dark:text-blue-400 dark:hover:bg-blue-950"
                 >
                   Get Started
                 </Link>
               </div>
             ))}
           </div>
+
+          <p className="mx-auto mt-7 max-w-3xl text-center text-xs leading-5 text-slate-500 dark:text-slate-400">
+            Package rates shown on this page are for informational purposes.
+            Please review the applicable terms, risk disclosure and other
+            platform information before making any financial decision.
+          </p>
+
+          <div className="mt-6 text-center">
+            <Link
+              href="/risk-disclosure"
+              className="text-sm font-semibold text-[#2563EB] hover:text-[#1D4ED8] dark:text-blue-400 dark:hover:text-blue-300"
+            >
+              Read the Risk Disclosure
+            </Link>
+          </div>
         </div>
       </section>
 
-      {/* Tasks */}
+      {/* Account Features */}
       <section
-        id="tasks"
+        id="account"
         className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20"
       >
-        <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
-          <div>
-            <SectionHeading
-              eyebrow="Daily Activities"
-              title="Five simple activities"
-              description="Subscribers can see their available activities directly on the dashboard. Completed activities are marked as done."
-              left
-            />
-
-            <Link
-              href="/register"
-              className="mt-7 inline-block rounded-xl bg-blue-600 px-6 py-3.5 text-sm font-bold text-white hover:bg-blue-700"
-            >
-              Create Your Account
-            </Link>
-          </div>
-
-          <div className="space-y-3">
-            <TaskItem number="01" text="Check your account" />
-            <TaskItem
-              number="02"
-              text="Review today's information"
-            />
-            <TaskItem
-              number="03"
-              text="Complete daily activity"
-            />
-            <TaskItem
-              number="04"
-              text="Review your account"
-            />
-            <TaskItem
-              number="05"
-              text="Check transaction history"
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* Wallet section */}
-      <section className="bg-blue-600 px-4 py-16 text-white sm:px-6 sm:py-20">
-        <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-2 lg:items-center">
-          <div>
-            <p className="text-xs font-bold uppercase tracking-wider text-blue-100">
-              Account Wallet
-            </p>
-
-            <h2 className="mt-2 text-3xl font-extrabold sm:text-4xl">
-              Keep your account activity organized.
-            </h2>
-
-            <p className="mt-4 max-w-xl text-sm leading-7 text-blue-100 sm:text-base">
-              Your dashboard brings together account balances,
-              investment information, transactions, deposit requests
-              and withdrawal requests.
-            </p>
-          </div>
-
-          <div className="rounded-3xl bg-white p-5 text-slate-900 shadow-2xl sm:p-7">
-            <p className="text-sm text-slate-500">
-              Wallet overview
-            </p>
-
-            <p className="mt-2 text-4xl font-extrabold">
-              $12.00
-            </p>
-
-            <div className="mt-6 grid grid-cols-2 gap-3">
-              <div className="rounded-xl bg-slate-50 p-4">
-                <p className="text-xs text-slate-400">
-                  Capital
-                </p>
-
-                <p className="mt-1 font-bold">
-                  $150.00
-                </p>
-              </div>
-
-              <div className="rounded-xl bg-slate-50 p-4">
-                <p className="text-xs text-slate-400">
-                  Returns
-                </p>
-
-                <p className="mt-1 font-bold">
-                  $12.00
-                </p>
-              </div>
-            </div>
-
-            <Link
-              href="/register"
-              className="mt-5 block rounded-xl bg-blue-600 px-5 py-3 text-center text-sm font-bold text-white hover:bg-blue-700"
-            >
-              Open Account
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ */}
-      <section
-        id="faq"
-        className="mx-auto max-w-4xl px-4 py-16 sm:px-6 sm:py-20"
-      >
         <SectionHeading
-          eyebrow="FAQ"
-          title="Frequently asked questions"
-          description="A few basic questions about the platform."
+          eyebrow="Your Dashboard"
+          title="Everything organized in one account."
+          description="Once signed in, subscribers can access the main areas of their BLUESTONIE account."
         />
 
-        <div className="mt-10 space-y-3">
-          <FAQ
-            question="What is the minimum account amount?"
-            answer="The current prototype displays a minimum amount of $10."
-          />
+        <div className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {accountFeatures.map((feature, index) => (
+            <div
+              key={feature}
+              className="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-5 py-4 dark:border-slate-700 dark:bg-[#111827]"
+            >
+              <div>
+                <p className="text-xs font-bold text-[#2563EB] dark:text-blue-400">
+                  {String(index + 1).padStart(2, "0")}
+                </p>
 
-          <FAQ
-            question="What is the maximum account amount?"
-            answer="The current prototype displays a maximum amount of $500."
-          />
+                <p className="mt-1 font-bold text-[#0F172A] dark:text-white">
+                  {feature}
+                </p>
+              </div>
 
-          <FAQ
-            question="What activities are available?"
-            answer="The platform is designed to provide five simple daily activities that appear on the subscriber dashboard."
-          />
+              <Link
+                href="/login"
+                className="text-xs font-semibold text-[#2563EB] hover:text-[#1D4ED8] dark:text-blue-400 dark:hover:text-blue-300"
+              >
+                Sign in
+              </Link>
+            </div>
+          ))}
+        </div>
+      </section>
 
-          <FAQ
-            question="What accounting rate is displayed?"
-            answer="The prototype uses a fixed accounting display of 1 USD = 4,000 UGX."
-          />
+      {/* Important Information */}
+      <section className="border-y border-slate-200 bg-[#F7F8FA] px-4 py-16 dark:border-slate-800 dark:bg-[#0B1120] sm:px-6 sm:py-20">
+        <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-2 lg:items-center">
+          <div>
+            <p className="text-sm font-bold uppercase tracking-[0.15em] text-[#2563EB] dark:text-blue-400">
+              Important Information
+            </p>
 
-          <FAQ
-            question="Can I see my transactions?"
-            answer="Yes. Subscribers have a transaction history page showing account activity."
-          />
+            <h2 className="mt-3 text-3xl font-extrabold tracking-tight text-[#0F172A] dark:text-white sm:text-4xl">
+              Understand the platform before you participate.
+            </h2>
+
+            <p className="mt-4 max-w-xl text-sm leading-7 text-slate-600 dark:text-slate-300 sm:text-base">
+              Please take time to understand the terms governing your account,
+              deposits, withdrawals, referrals and the risks associated with
+              financial activities.
+            </p>
+          </div>
+
+          <div className="grid gap-3 sm:grid-cols-2">
+            <InfoLink href="/terms" text="Terms & Conditions" />
+            <InfoLink href="/privacy" text="Privacy Policy" />
+            <InfoLink
+              href="/deposit-withdrawal-policy"
+              text="Deposit & Withdrawal Policy"
+            />
+            <InfoLink href="/referral-terms" text="Referral Terms" />
+            <InfoLink href="/risk-disclosure" text="Risk Disclosure" />
+            <InfoLink href="/support" text="Support" />
+          </div>
         </div>
       </section>
 
       {/* CTA */}
-      <section className="px-4 pb-16 sm:px-6 sm:pb-20">
-        <div className="mx-auto max-w-5xl overflow-hidden rounded-3xl bg-slate-950 px-5 py-12 text-center text-white sm:px-10">
-          <h2 className="text-3xl font-extrabold sm:text-4xl">
+      <section className="px-4 py-16 sm:px-6 sm:py-20">
+        <div className="mx-auto max-w-5xl rounded-3xl bg-[#0F172A] px-5 py-12 text-center text-white sm:px-10">
+          <p className="text-sm font-bold uppercase tracking-[0.15em] text-blue-400">
+            BLUESTONIE
+          </p>
+
+          <h2 className="mt-3 text-3xl font-extrabold sm:text-4xl">
             Ready to get started?
           </h2>
 
-          <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-slate-400 sm:text-base">
-            Create your account and access your personal
-            BLUESTONIE dashboard.
+          <p className="mx-auto mt-4 max-w-xl text-sm leading-6 text-slate-300 sm:text-base">
+            Create your account and access your personal BLUESTONIE dashboard.
           </p>
 
           <div className="mt-7 flex flex-col justify-center gap-3 sm:flex-row">
             <Link
               href="/register"
-              className="rounded-xl bg-blue-600 px-6 py-3.5 text-sm font-bold text-white hover:bg-blue-500"
+              className="rounded-lg bg-[#2563EB] px-6 py-3.5 text-sm font-bold text-white hover:bg-[#1D4ED8]"
             >
               Create Account
             </Link>
 
             <Link
               href="/login"
-              className="rounded-xl border border-slate-700 px-6 py-3.5 text-sm font-bold text-white hover:bg-slate-900"
+              className="rounded-lg border border-slate-600 px-6 py-3.5 text-sm font-bold text-white hover:bg-slate-800"
             >
               Login
             </Link>
@@ -478,7 +410,7 @@ export default function HomePage() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-slate-950 px-4 py-10 text-slate-400 sm:px-6">
+      <footer className="border-t border-slate-800 bg-[#0F172A] px-4 py-10 text-slate-400 sm:px-6">
         <div className="mx-auto max-w-7xl">
           <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
             <div>
@@ -486,15 +418,14 @@ export default function HomePage() {
                 BLUESTONIE
               </p>
 
-              <p className="mt-3 text-sm leading-6">
-                A simple digital account management platform.
+              <p className="mt-3 max-w-xs text-sm leading-6">
+                A digital platform for managing your account, investments and
+                related activities.
               </p>
             </div>
 
             <div>
-              <p className="font-bold text-white">
-                Platform
-              </p>
+              <p className="font-bold text-white">Platform</p>
 
               <div className="mt-3 space-y-2 text-sm">
                 <a
@@ -512,51 +443,70 @@ export default function HomePage() {
                 </a>
 
                 <a
-                  href="#tasks"
+                  href="#account"
                   className="block hover:text-white"
                 >
-                  Daily Activities
+                  Dashboard
                 </a>
               </div>
             </div>
 
             <div>
-              <p className="font-bold text-white">
-                Account
-              </p>
+              <p className="font-bold text-white">Account</p>
 
               <div className="mt-3 space-y-2 text-sm">
-                <Link
-                  href="/login"
-                  className="block hover:text-white"
-                >
+                <Link href="/login" className="block hover:text-white">
                   Login
                 </Link>
 
-                <Link
-                  href="/register"
-                  className="block hover:text-white"
-                >
-                  Register
+                <Link href="/register" className="block hover:text-white">
+                  Create Account
+                </Link>
+
+                <Link href="/support" className="block hover:text-white">
+                  Support
                 </Link>
               </div>
             </div>
 
             <div>
-              <p className="font-bold text-white">
-                Information
-              </p>
+              <p className="font-bold text-white">Legal</p>
 
-              <p className="mt-3 text-sm leading-6">
-                Please review all applicable terms,
-                disclosures and regulatory information before
-                using any financial service.
-              </p>
+              <div className="mt-3 space-y-2 text-sm">
+                <Link href="/terms" className="block hover:text-white">
+                  Terms
+                </Link>
+
+                <Link href="/privacy" className="block hover:text-white">
+                  Privacy
+                </Link>
+
+                <Link
+                  href="/risk-disclosure"
+                  className="block hover:text-white"
+                >
+                  Risk Disclosure
+                </Link>
+
+                <Link
+                  href="/deposit-withdrawal-policy"
+                  className="block hover:text-white"
+                >
+                  Deposit & Withdrawal Policy
+                </Link>
+
+                <Link
+                  href="/referral-terms"
+                  className="block hover:text-white"
+                >
+                  Referral Terms
+                </Link>
+              </div>
             </div>
           </div>
 
-          <div className="mt-10 border-t border-slate-800 pt-6 text-xs">
-            © 2026 BLUESTONIE. Prototype interface.
+          <div className="mt-10 border-t border-slate-800 pt-6 text-xs leading-5">
+            © 2026 BLUESTONIE. All rights reserved.
           </div>
         </div>
       </footer>
@@ -564,35 +514,35 @@ export default function HomePage() {
   );
 }
 
-/* Components */
+/* Section Heading */
 
 function SectionHeading({
   eyebrow,
   title,
   description,
-  left = false,
 }: {
   eyebrow: string;
   title: string;
   description: string;
-  left?: boolean;
 }) {
   return (
-    <div className={left ? "" : "text-center"}>
-      <p className="text-xs font-bold uppercase tracking-wider text-blue-600 sm:text-sm">
+    <div className="mx-auto max-w-3xl text-center">
+      <p className="text-xs font-bold uppercase tracking-[0.15em] text-[#2563EB] dark:text-blue-400 sm:text-sm">
         {eyebrow}
       </p>
 
-      <h2 className="mt-2 text-3xl font-extrabold tracking-tight sm:text-4xl">
+      <h2 className="mt-3 text-3xl font-extrabold tracking-tight text-[#0F172A] dark:text-white sm:text-4xl">
         {title}
       </h2>
 
-      <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-slate-500 sm:text-base">
+      <p className="mx-auto mt-3 text-sm leading-6 text-slate-500 dark:text-slate-400 sm:text-base">
         {description}
       </p>
     </div>
   );
 }
+
+/* Stat */
 
 function Stat({
   value,
@@ -602,17 +552,19 @@ function Stat({
   label: string;
 }) {
   return (
-    <div className="px-3 py-6 text-center sm:px-6 sm:py-8">
-      <p className="text-xl font-extrabold text-slate-900 sm:text-2xl">
+    <div className="border-r border-slate-200 px-3 py-6 text-center last:border-r-0 dark:border-slate-800 sm:px-6 sm:py-8">
+      <p className="text-xl font-extrabold text-[#0F172A] dark:text-white sm:text-2xl">
         {value}
       </p>
 
-      <p className="mt-1 text-[11px] text-slate-500 sm:text-xs">
+      <p className="mt-1 text-[11px] text-slate-500 dark:text-slate-400 sm:text-xs">
         {label}
       </p>
     </div>
   );
 }
+
+/* Step */
 
 function Step({
   number,
@@ -624,86 +576,37 @@ function Step({
   text: string;
 }) {
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-      <span className="text-sm font-extrabold text-blue-600">
+    <div className="rounded-2xl border border-slate-200 bg-white p-6 dark:border-slate-700 dark:bg-[#111827]">
+      <p className="text-sm font-extrabold text-[#2563EB] dark:text-blue-400">
         {number}
-      </span>
+      </p>
 
-      <h3 className="mt-4 font-extrabold">
+      <h3 className="mt-5 text-lg font-extrabold text-[#0F172A] dark:text-white">
         {title}
       </h3>
 
-      <p className="mt-2 text-sm leading-6 text-slate-500">
+      <p className="mt-2 text-sm leading-6 text-slate-500 dark:text-slate-400">
         {text}
       </p>
     </div>
   );
 }
 
-function TaskItem({
-  number,
+/* Information Link */
+
+function InfoLink({
+  href,
   text,
 }: {
-  number: string;
+  href: string;
   text: string;
 }) {
   return (
-    <div className="flex items-center gap-4 rounded-2xl border border-slate-200 bg-white p-4">
-      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-50 text-sm font-extrabold text-blue-700">
-        {number}
-      </div>
-
-      <p className="text-sm font-semibold">
-        {text}
-      </p>
-
-      <span className="ml-auto text-green-500">
-        ✓
-      </span>
-    </div>
-  );
-}
-
-function MiniCard({
-  icon,
-  text,
-}: {
-  icon: string;
-  text: string;
-}) {
-  return (
-    <div className="rounded-xl border border-slate-100 bg-white p-3 text-center">
-      <span className="text-lg">{icon}</span>
-
-      <p className="mt-1 text-[11px] font-bold text-slate-600">
-        {text}
-      </p>
-    </div>
-  );
-}
-
-function FAQ({
-  question,
-  answer,
-}: {
-  question: string;
-  answer: string;
-}) {
-  return (
-    <details className="group rounded-2xl border border-slate-200 bg-white p-5">
-      <summary className="cursor-pointer list-none pr-6 text-sm font-bold marker:hidden">
-        <div className="flex items-center justify-between gap-4">
-          <span>{question}</span>
-
-          <span className="text-blue-600 transition group-open:rotate-45">
-            +
-          </span>
-        </div>
-      </summary>
-
-      <p className="mt-4 text-sm leading-6 text-slate-500">
-        {answer}
-      </p>
-    </details>
+    <Link
+      href={href}
+      className="rounded-xl border border-slate-200 bg-white px-5 py-4 text-sm font-bold text-[#0F172A] hover:border-[#93C5FD] hover:text-[#2563EB] dark:border-slate-700 dark:bg-[#111827] dark:text-slate-200 dark:hover:border-blue-700 dark:hover:text-blue-400"
+    >
+      {text}
+    </Link>
   );
 }
