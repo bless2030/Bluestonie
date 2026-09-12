@@ -16,6 +16,9 @@ export default function ResetPasswordPage() {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
 
+  const [showPassword, setShowPassword] = useState(false);
+const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   useEffect(() => {
     const {
       data: { subscription },
@@ -155,46 +158,65 @@ export default function ResetPasswordPage() {
               className="mt-6 space-y-4"
             >
               <div>
-                <label
-                  htmlFor="password"
-                  className="text-sm font-semibold text-slate-700"
-                >
-                  New password
-                </label>
+  <label
+    htmlFor="password"
+    className="text-sm font-semibold text-slate-700"
+  >
+    New password
+  </label>
 
-                <input
-                  id="password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Enter new password"
-                  autoComplete="new-password"
-                  required
-                  className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-base text-slate-900 outline-none placeholder:text-slate-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
-                />
-              </div>
+  <div className="relative mt-2">
+    <input
+      id="password"
+      type={showPassword ? "text" : "password"}
+      value={password}
+      onChange={(e) => setPassword(e.target.value)}
+      placeholder="Enter new password"
+      autoComplete="new-password"
+      required
+      className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 pr-16 text-base text-slate-900 outline-none placeholder:text-slate-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
+    />
 
+    <button
+      type="button"
+      onClick={() => setShowPassword(!showPassword)}
+      className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-blue-600 hover:text-blue-700"
+    >
+      {showPassword ? "Hide" : "Show"}
+    </button>
+  </div>
+</div>
               <div>
-                <label
-                  htmlFor="confirmPassword"
-                  className="text-sm font-semibold text-slate-700"
-                >
-                  Confirm new password
-                </label>
+  <label
+    htmlFor="confirmPassword"
+    className="text-sm font-semibold text-slate-700"
+  >
+    Confirm new password
+  </label>
 
-                <input
-                  id="confirmPassword"
-                  type="password"
-                  value={confirmPassword}
-                  onChange={(e) =>
-                    setConfirmPassword(e.target.value)
-                  }
-                  placeholder="Confirm new password"
-                  autoComplete="new-password"
-                  required
-                  className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-base text-slate-900 outline-none placeholder:text-slate-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
-                />
-              </div>
+  <div className="relative mt-2">
+    <input
+      id="confirmPassword"
+      type={showConfirmPassword ? "text" : "password"}
+      value={confirmPassword}
+      onChange={(e) => setConfirmPassword(e.target.value)}
+      placeholder="Confirm new password"
+      autoComplete="new-password"
+      required
+      className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 pr-16 text-base text-slate-900 outline-none placeholder:text-slate-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
+    />
+
+    <button
+      type="button"
+      onClick={() =>
+        setShowConfirmPassword(!showConfirmPassword)
+      }
+      className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-blue-600 hover:text-blue-700"
+    >
+      {showConfirmPassword ? "Hide" : "Show"}
+    </button>
+  </div>
+</div>
 
               <p className="text-xs text-slate-500">
                 Password must be at least 6 characters.

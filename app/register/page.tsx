@@ -30,6 +30,9 @@ function RegisterForm() {
   const [error, setError] = useState("");
   const [agreedToTerms, setAgreedToTerms] = useState(false);
 
+  const [showPassword, setShowPassword] = useState(false);
+const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   useEffect(() => {
     const ref = searchParams.get("ref");
 
@@ -222,45 +225,67 @@ function RegisterForm() {
 
             {/* Password */}
             <div>
-              <label
-                htmlFor="password"
-                className="text-sm font-semibold text-slate-700"
-              >
-                Password
-              </label>
+  <label
+    htmlFor="password"
+    className="text-sm font-semibold text-slate-700"
+  >
+    Password
+  </label>
 
-              <input
-                id="password"
-                name="password"
-                type="password"
-                value={form.password}
-                onChange={handleChange}
-                placeholder="Create a password"
-                autoComplete="new-password"
-                className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-base text-slate-900 outline-none placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-              />
-            </div>
+  <div className="relative mt-2">
+    <input
+      id="password"
+      name="password"
+      type={showPassword ? "text" : "password"}
+      value={form.password}
+      onChange={handleChange}
+      placeholder="Create a password"
+      autoComplete="new-password"
+      required
+      className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 pr-16 text-base text-slate-900 outline-none placeholder:text-slate-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
+    />
+
+    <button
+      type="button"
+      onClick={() => setShowPassword(!showPassword)}
+      className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-blue-600 hover:text-blue-700"
+    >
+      {showPassword ? "Hide" : "Show"}
+    </button>
+  </div>
+</div>
 
             {/* Confirm password */}
             <div>
-              <label
-                htmlFor="confirmPassword"
-                className="text-sm font-semibold text-slate-700"
-              >
-                Confirm password
-              </label>
+  <label
+    htmlFor="confirmPassword"
+    className="text-sm font-semibold text-slate-700"
+  >
+    Confirm Password
+  </label>
 
-              <input
-                id="confirmPassword"
-                name="confirmPassword"
-                type="password"
-                value={form.confirmPassword}
-                onChange={handleChange}
-                placeholder="Confirm your password"
-                autoComplete="new-password"
-                className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-base text-slate-900 outline-none placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-              />
-            </div>
+  <div className="relative mt-2">
+    <input
+      id="confirmPassword"
+      name="confirmPassword"
+      type={showConfirmPassword ? "text" : "password"}
+      value={form.confirmPassword}
+      onChange={handleChange}
+      placeholder="Confirm your password"
+      autoComplete="new-password"
+      required
+      className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 pr-16 text-base text-slate-900 outline-none placeholder:text-slate-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
+    />
+
+    <button
+      type="button"
+      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+      className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-blue-600 hover:text-blue-700"
+    >
+      {showConfirmPassword ? "Hide" : "Show"}
+    </button>
+  </div>
+</div>
 
             {/* Terms and agreement */}
 <label className="flex items-start gap-3 text-sm leading-5 text-slate-600">

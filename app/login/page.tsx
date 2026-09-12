@@ -16,6 +16,8 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  const [showPassword, setShowPassword] = useState(false);
+
   function handleChange(e: ChangeEvent<HTMLInputElement>) {
     setForm({
       ...form,
@@ -168,35 +170,44 @@ export default function LoginPage() {
               />
             </div>
 
-            <div>
-              <label
-                htmlFor="password"
-                className="text-sm font-semibold text-slate-700"
-              >
-                Password
-              </label>
-
-              <input
-                id="password"
-                name="password"
-                type="password"
-                value={form.password}
-                onChange={handleChange}
-                placeholder="Enter your password"
-                autoComplete="current-password"
-                className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-base text-slate-900 outline-none placeholder:text-slate-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
-              />
-            </div>
-
-            <div className="mt-2 text-right">
-  <Link
-    href="/forgot-password"
-    className="text-sm font-semibold text-blue-600 hover:text-blue-700"
+ <div>
+  <label
+    htmlFor="password"
+    className="text-sm font-semibold text-slate-700"
   >
-    Forgot password?
-  </Link>
-</div>
+    Password
+  </label>
 
+  <div className="relative mt-2">
+    <input
+      id="password"
+      name="password"
+      type={showPassword ? "text" : "password"}
+      value={form.password}
+      onChange={handleChange}
+      placeholder="Enter your password"
+      autoComplete="current-password"
+      className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 pr-16 text-base text-slate-900 outline-none placeholder:text-slate-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
+    />
+
+    <button
+      type="button"
+      onClick={() => setShowPassword(!showPassword)}
+      className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-blue-600 hover:text-blue-700"
+    >
+      {showPassword ? "Hide" : "Show"}
+    </button>
+  </div>
+
+  <div className="mt-2 text-right">
+    <Link
+      href="/forgot-password"
+      className="text-sm font-semibold text-blue-600 hover:text-blue-700"
+    >
+      Forgot password?
+    </Link>
+  </div>
+</div>
             <button
               type="submit"
               disabled={loading}
