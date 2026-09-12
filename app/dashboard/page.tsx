@@ -1076,7 +1076,7 @@ const withdrawableProfitUgx = Math.round(
   value={withdrawAmount}
   onChange={(e) => setWithdrawAmount(e.target.value)}
   placeholder="Enter amount"
-  className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-blue-500"
+  className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-base text-slate-900 outline-none placeholder:text-slate-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
 />
 {withdrawableProfit < 15 && (
   <div className="mt-2 rounded-xl border border-amber-200 bg-amber-50 p-3">
@@ -1158,7 +1158,7 @@ const withdrawableProfitUgx = Math.round(
                 }
                 placeholder="e.g. Mobile Money number and account name"
                 rows={3}
-                className="mt-2 w-full resize-none rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-blue-500"
+                className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-base text-slate-900 outline-none placeholder:text-slate-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
               />
             </div>
 
@@ -1320,7 +1320,7 @@ const withdrawableProfitUgx = Math.round(
                         )
                       }
                       placeholder="Enter amount"
-                      className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-blue-500"
+                      className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-base text-slate-900 outline-none placeholder:text-slate-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
                     />
                     {depositUsd && Number(depositUsd) > 0 && (
   <p className="mt-2 text-sm font-semibold text-slate-600 dark:text-slate-300">
@@ -1345,7 +1345,7 @@ const withdrawableProfitUgx = Math.round(
                       }
                       
                       placeholder="e.g. transaction number"
-                      className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-blue-500"
+                      className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-base text-slate-900 outline-none placeholder:text-slate-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
                     />
                     
                   </div>

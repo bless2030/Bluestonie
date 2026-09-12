@@ -10,6 +10,7 @@ export type Profile = {
   country: string | null;
   role: string | null;
   status: string | null;
+  referral_code: string | null;
   created_at?: string | null;
   updated_at?: string | null;
 };

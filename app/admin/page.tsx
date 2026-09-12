@@ -2074,6 +2074,20 @@ function Withdrawals() {
 
 function Users() {
   const [users, setUsers] = useState<Profile[]>([]);
+
+const [selectedUser, setSelectedUser] = useState<Profile | null>(null);
+const [userWallet, setUserWallet] = useState<{
+  balance_usd: number;
+  balance_ugx: number;
+  total_deposited_usd: number;
+  total_invested_usd: number;
+  total_returns_usd: number;
+  total_withdrawn_usd: number;
+} | null>(null);
+const [walletLoading, setWalletLoading] = useState(false);
+const [walletError, setWalletError] = useState("");
+
+
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -2085,8 +2099,8 @@ function Users() {
     const { data, error } = await supabase
       .from("profiles")
       .select(
-        "id, full_name, phone, country, role, status, created_at, updated_at"
-      )
+  "id, full_name, phone, country, role, status, referral_code, created_at, updated_at"
+)
       .order("created_at", { ascending: false });
 
     if (error) {
@@ -2100,6 +2114,32 @@ function Users() {
     setUsers((data || []) as Profile[]);
     setLoading(false);
   }, []);
+
+
+const loadUserWallet = async (user: Profile) => {
+  setSelectedUser(user);
+  setUserWallet(null);
+  setWalletError("");
+  setWalletLoading(true);
+
+  const { data, error } = await supabase.rpc(
+    "get_admin_user_wallet",
+    {
+      p_user_id: user.id,
+    }
+  );
+
+  if (error) {
+    console.error("USER WALLET ERROR:", error);
+    setWalletError(error.message);
+    setWalletLoading(false);
+    return;
+  }
+
+  setUserWallet(data?.[0] || null);
+  setWalletLoading(false);
+};
+
 
   useEffect(() => {
     void loadUsers();
@@ -2185,6 +2225,7 @@ function Users() {
                 key={user.id}
                 className="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-200 sm:p-5"
               >
+                
                 <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                   <div className="flex min-w-0 gap-3">
                     <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-blue-50 font-extrabold text-blue-700">
@@ -2207,39 +2248,225 @@ function Users() {
                       </p>
 
                       <p className="mt-1 break-all font-mono text-[10px] text-slate-400">
-                        {user.id}
-                      </p>
-                    </div>
+  {user.id}
+</p>
+
+<p className="mt-1 text-xs text-slate-500">
+  Referral Code:{" "}
+  <span className="font-semibold text-slate-700">
+    {user.referral_code || "—"}
+  </span>
+</p>
+
+</div>
                   </div>
 
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="rounded-full bg-blue-50 px-3 py-1 text-[10px] font-extrabold uppercase text-blue-700">
-                      {user.role || "user"}
-                    </span>
+                   
+<div className="flex flex-wrap items-center gap-2">
+  <span className="rounded-full bg-blue-50 px-3 py-1 text-[10px] font-extrabold uppercase text-blue-700">
+    {user.role || "user"}
+  </span>
 
-                    <span
-                      className={`rounded-full px-3 py-1 text-[10px] font-extrabold uppercase ${
-                        user.status === "active"
-                          ? "bg-green-50 text-green-700"
-                          : "bg-red-50 text-red-700"
-                      }`}
-                    >
-                      {user.status || "unknown"}
-                    </span>
+  <span
+    className={`rounded-full px-3 py-1 text-[10px] font-extrabold uppercase ${
+      user.status === "active"
+        ? "bg-green-50 text-green-700"
+        : "bg-red-50 text-red-700"
+    }`}
+  >
+    {user.status || "unknown"}
+  </span>
 
-                    <span className="text-xs text-slate-400">
-                      Joined {formatDate(user.created_at)}
-                    </span>
+  <span className="text-xs text-slate-400">
+    Joined {formatDate(user.created_at)}
+  </span>
+
+  <button
+    type="button"
+    onClick={() => void loadUserWallet(user)}
+    className="rounded-xl bg-blue-600 px-4 py-2 text-xs font-bold text-white hover:bg-blue-700"
+  >
+    View Details
+  </button>
+</div>
+
                   </div>
                 </div>
               </div>
             ))}
+                </div>
+    )}
+
+    {selectedUser && (
+      <div className="fixed inset-0 z-[80] flex items-center justify-center bg-slate-950/60 p-4">
+        <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white p-5 shadow-2xl sm:p-6">
+          
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-wider text-blue-600">
+                User Details
+              </p>
+
+              <h2 className="mt-1 text-xl font-extrabold text-slate-900">
+                {selectedUser.full_name || "No name"}
+              </h2>
+
+              <p className="mt-1 text-sm text-slate-500">
+                {selectedUser.phone || "No phone"}
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => {
+                setSelectedUser(null);
+                setUserWallet(null);
+                setWalletError("");
+              }}
+              className="rounded-xl px-3 py-2 text-slate-400 hover:bg-slate-100"
+            >
+              Close
+            </button>
           </div>
-        )}
+
+          <div className="mt-6 grid gap-3 sm:grid-cols-2">
+            <div className="rounded-xl bg-slate-50 p-4">
+              <p className="text-xs text-slate-400">
+                Account Status
+              </p>
+
+              <p className="mt-1 font-extrabold text-slate-900">
+                {selectedUser.status || "unknown"}
+              </p>
+            </div>
+
+            <div className="rounded-xl bg-slate-50 p-4">
+              <p className="text-xs text-slate-400">
+                Referral Code
+              </p>
+
+              <p className="mt-1 font-extrabold text-slate-900">
+                {selectedUser.referral_code || "—"}
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-6">
+            <p className="text-sm font-extrabold text-slate-900">
+              Wallet Summary
+            </p>
+
+            {walletLoading ? (
+              <div className="mt-3 rounded-xl bg-slate-50 p-6 text-center">
+                <p className="text-sm text-slate-500">
+                  Loading wallet...
+                </p>
+              </div>
+            ) : walletError ? (
+              <div className="mt-3 rounded-xl bg-red-50 p-4">
+                <p className="font-bold text-red-600">
+                  Unable to load wallet
+                </p>
+
+                <p className="mt-1 break-words text-sm text-red-500">
+                  {walletError}
+                </p>
+              </div>
+            ) : userWallet ? (
+              <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                <div className="rounded-xl bg-blue-50 p-4">
+                  <p className="text-xs text-blue-600">
+                    Balance USD
+                  </p>
+
+                  <p className="mt-1 text-xl font-extrabold text-blue-700">
+                    ${Number(userWallet.balance_usd || 0).toFixed(2)}
+                  </p>
+                </div>
+
+                <div className="rounded-xl bg-slate-50 p-4">
+                  <p className="text-xs text-slate-500">
+                    Balance UGX
+                  </p>
+
+                  <p className="mt-1 text-xl font-extrabold text-slate-900">
+                    UGX{" "}
+                    {Number(
+                      userWallet.balance_ugx || 0
+                    ).toLocaleString()}
+                  </p>
+                </div>
+
+                <div className="rounded-xl bg-slate-50 p-4">
+                  <p className="text-xs text-slate-500">
+                    Total Deposited
+                  </p>
+
+                  <p className="mt-1 font-extrabold text-slate-900">
+                    $
+                    {Number(
+                      userWallet.total_deposited_usd || 0
+                    ).toFixed(2)}
+                  </p>
+                </div>
+
+                <div className="rounded-xl bg-slate-50 p-4">
+                  <p className="text-xs text-slate-500">
+                    Total Invested
+                  </p>
+
+                  <p className="mt-1 font-extrabold text-slate-900">
+                    $
+                    {Number(
+                      userWallet.total_invested_usd || 0
+                    ).toFixed(2)}
+                  </p>
+                </div>
+
+                <div className="rounded-xl bg-slate-50 p-4">
+                  <p className="text-xs text-slate-500">
+                    Total Returns
+                  </p>
+
+                  <p className="mt-1 font-extrabold text-green-700">
+                    $
+                    {Number(
+                      userWallet.total_returns_usd || 0
+                    ).toFixed(2)}
+                  </p>
+                </div>
+
+                <div className="rounded-xl bg-slate-50 p-4">
+                  <p className="text-xs text-slate-500">
+                    Total Withdrawn
+                  </p>
+
+                  <p className="mt-1 font-extrabold text-slate-900">
+                    $
+                    {Number(
+                      userWallet.total_withdrawn_usd || 0
+                    ).toFixed(2)}
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <div className="mt-3 rounded-xl bg-slate-50 p-5">
+                <p className="text-sm text-slate-500">
+                  No wallet record found for this user.
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
-    </div>
+    )}
+  </div>
+</div>
   );
 }
+
+
 
 /* =========================================================
    PACKAGES
