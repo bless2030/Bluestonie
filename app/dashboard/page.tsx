@@ -1476,6 +1476,45 @@ const withdrawableProfitUgx = Math.round(
           </div>
         </section>
 
+        {/* NOTICES */}
+        {notices.length > 0 && (
+          <section id="notices" className="mt-6">
+            <div className="mb-3">
+              <h2 className="text-lg font-extrabold text-slate-900">
+                Messages
+              </h2>
+
+              <p className="text-xs text-slate-500">
+                Important updates for your account.
+              </p>
+            </div>
+
+            <div className="space-y-3">
+              {notices.map((notice) => (
+                <div
+                  key={notice.id}
+                  className="rounded-2xl border border-blue-100 bg-white p-4 shadow-sm"
+                >
+                  <p className="font-extrabold text-slate-900">
+                    {notice.title}
+                  </p>
+
+                  <p className="mt-1 text-sm leading-6 text-slate-600">
+                    {notice.message}
+                  </p>
+
+                  <p className="mt-2 text-[11px] text-slate-400">
+                    {new Date(
+                      notice.created_at
+                    ).toLocaleDateString()}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+
         {/* REFERRALS */}
 <section id="referrals" className="mt-6">
   <div className="mb-3">
@@ -1640,46 +1679,6 @@ const withdrawableProfitUgx = Math.round(
     )}
   </div>
 </section>
-
-
-        {/* NOTICES */}
-        {notices.length > 0 && (
-          <section id="notices" className="mt-6">
-            <div className="mb-3">
-              <h2 className="text-lg font-extrabold text-slate-900">
-                Messages
-              </h2>
-
-              <p className="text-xs text-slate-500">
-                Important updates for your account.
-              </p>
-            </div>
-
-            <div className="space-y-3">
-              {notices.map((notice) => (
-                <div
-                  key={notice.id}
-                  className="rounded-2xl border border-blue-100 bg-white p-4 shadow-sm"
-                >
-                  <p className="font-extrabold text-slate-900">
-                    {notice.title}
-                  </p>
-
-                  <p className="mt-1 text-sm leading-6 text-slate-600">
-                    {notice.message}
-                  </p>
-
-                  <p className="mt-2 text-[11px] text-slate-400">
-                    {new Date(
-                      notice.created_at
-                    ).toLocaleDateString()}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
-
        
 
         {/* DAILY TASKS */}
@@ -1789,7 +1788,7 @@ const withdrawableProfitUgx = Math.round(
                 </p>
               </div>
 
-              <div className="text-sm font-extrabold text-blue-600">
+              <div className="text-sm font-extrabold text-blue-900">
                 ${totalDeposits.toFixed(2)} total
               </div>
             </div>
