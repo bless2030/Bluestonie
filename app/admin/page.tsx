@@ -2473,12 +2473,132 @@ const loadUserWallet = async (user: Profile) => {
 ========================================================= */
 
 function Packages() {
-  const packages = [
-    ["Basic", "$10 – $50", "2%"],
-    ["Standard", "$51 – $150", "2.5%"],
-    ["Premium", "$151 – $300", "3%"],
-    ["VVIP", "$301 – $500", "3.5%"],
-  ];
+  const [packages, setPackages] = useState<
+    {
+      id: string;
+      name: string;
+      min_usd: number;
+      max_usd: number;
+      displayed_roi_percent: number;
+      is_active: boolean;
+    }[]
+  >([]);
+
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [editingPackage, setEditingPackage] = useState<{
+    id: string;
+    name: string;
+    min_usd: string;
+    max_usd: string;
+    displayed_roi_percent: string;
+    is_active: boolean;
+  } | null>(null);
+
+  const [saving, setSaving] = useState(false);
+  const [message, setMessage] = useState("");
+
+  const loadPackages = useCallback(async () => {
+    setLoading(true);
+    setError("");
+
+    const { data, error } = await supabase
+      .from("packages")
+      .select(
+        "id, name, min_usd, max_usd, displayed_roi_percent, is_active"
+      )
+      .order("min_usd", { ascending: true });
+
+    if (error) {
+      console.error("PACKAGES ERROR:", error);
+      setError(error.message);
+      setPackages([]);
+      setLoading(false);
+      return;
+    }
+
+    setPackages(data || []);
+    setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    void loadPackages();
+  }, [loadPackages]);
+
+  function openEdit(packageItem: (typeof packages)[number]) {
+    setMessage("");
+
+    setEditingPackage({
+      id: packageItem.id,
+      name: packageItem.name,
+      min_usd: String(packageItem.min_usd),
+      max_usd: String(packageItem.max_usd),
+      displayed_roi_percent: String(
+        packageItem.displayed_roi_percent
+      ),
+      is_active: packageItem.is_active,
+    });
+  }
+
+  function closeEdit() {
+    if (saving) return;
+
+    setEditingPackage(null);
+  }
+
+  async function savePackage() {
+    if (!editingPackage) return;
+
+    setError("");
+    setMessage("");
+
+    const minUsd = Number(editingPackage.min_usd);
+    const maxUsd = Number(editingPackage.max_usd);
+    const roi = Number(
+      editingPackage.displayed_roi_percent
+    );
+
+    if (!editingPackage.name.trim()) {
+      setError("Package name is required.");
+      return;
+    }
+
+    if (
+      !Number.isFinite(minUsd) ||
+      !Number.isFinite(maxUsd) ||
+      !Number.isFinite(roi)
+    ) {
+      setError("Please enter valid package values.");
+      return;
+    }
+
+    setSaving(true);
+
+    const { error } = await supabase.rpc(
+      "admin_update_package",
+      {
+        p_package_id: editingPackage.id,
+        p_name: editingPackage.name.trim(),
+        p_min_usd: minUsd,
+        p_max_usd: maxUsd,
+        p_displayed_roi_percent: roi,
+        p_is_active: editingPackage.is_active,
+      }
+    );
+
+    if (error) {
+      console.error("UPDATE PACKAGE ERROR:", error);
+      setError(error.message);
+      setSaving(false);
+      return;
+    }
+
+    setMessage("Package updated successfully.");
+    setEditingPackage(null);
+    setSaving(false);
+
+    await loadPackages();
+  }
 
   return (
     <div>
@@ -2488,50 +2608,245 @@ function Packages() {
         description="Manage the package ranges and displayed rates."
       />
 
-      <div className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        {packages.map(([name, range, rate]) => (
-          <div
-            key={name}
-            className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-200"
-          >
-            <div className="flex items-center justify-between gap-2">
-              <h2 className="text-lg font-extrabold">
-                {name}
-              </h2>
+      {message && (
+        <div className="mt-5 rounded-xl bg-green-50 p-4 text-sm font-bold text-green-700">
+          {message}
+        </div>
+      )}
 
-              <span className="rounded-full bg-green-50 px-2.5 py-1 text-[10px] font-bold text-green-700">
-                ACTIVE
-              </span>
-            </div>
+      {error && (
+        <div className="mt-5 rounded-xl border border-red-200 bg-red-50 p-4">
+          <p className="font-bold text-red-600">
+            Unable to process package
+          </p>
 
-            <p className="mt-5 text-2xl font-extrabold text-blue-700">
-              {range}
-            </p>
+          <p className="mt-1 break-words text-sm text-red-500">
+            {error}
+          </p>
+        </div>
+      )}
 
-            <div className="mt-4 rounded-xl bg-slate-50 p-4">
-              <p className="text-xs text-slate-400">
-                Daily displayed rate
-              </p>
-
-              <p className="mt-1 text-xl font-extrabold">
-                {rate}
-              </p>
-            </div>
-
-            <button
-              type="button"
-              onClick={() =>
-                window.alert(
-                  `${name} package editing will be connected to the packages table next.`
-                )
-              }
-              className="mt-4 w-full rounded-xl border border-slate-200 py-2.5 text-sm font-bold hover:bg-slate-50"
+      {loading ? (
+        <div className="mt-6 rounded-2xl bg-white p-8 text-center shadow-sm ring-1 ring-slate-200">
+          <p className="text-sm text-slate-500">
+            Loading packages...
+          </p>
+        </div>
+      ) : packages.length === 0 ? (
+        <div className="mt-6 rounded-2xl bg-white p-8 text-center shadow-sm ring-1 ring-slate-200">
+          <p className="font-bold text-slate-700">
+            No packages found
+          </p>
+        </div>
+      ) : (
+        <div className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          {packages.map((packageItem) => (
+            <div
+              key={packageItem.id}
+              className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-200"
             >
-              Edit Package
-            </button>
+              <div className="flex items-center justify-between gap-2">
+                <h2 className="text-lg font-extrabold">
+                  {packageItem.name}
+                </h2>
+
+                <span
+                  className={`rounded-full px-2.5 py-1 text-[10px] font-bold ${
+                    packageItem.is_active
+                      ? "bg-green-50 text-green-700"
+                      : "bg-red-50 text-red-700"
+                  }`}
+                >
+                  {packageItem.is_active
+                    ? "ACTIVE"
+                    : "INACTIVE"}
+                </span>
+              </div>
+
+              <p className="mt-5 text-2xl font-extrabold text-blue-700">
+                ${Number(packageItem.min_usd).toFixed(0)} – $
+                {Number(packageItem.max_usd).toFixed(0)}
+              </p>
+
+              <div className="mt-4 rounded-xl bg-slate-50 p-4">
+                <p className="text-xs text-slate-400">
+                  Daily displayed rate
+                </p>
+
+                <p className="mt-1 text-xl font-extrabold">
+                  {Number(
+                    packageItem.displayed_roi_percent
+                  )}
+                  %
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => openEdit(packageItem)}
+                className="mt-4 w-full rounded-xl bg-blue-600 py-2.5 text-sm font-bold text-white hover:bg-blue-700"
+              >
+                Edit Package
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {editingPackage && (
+        <div className="fixed inset-0 z-[80] flex items-center justify-center bg-slate-950/60 p-4">
+          <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white p-5 shadow-2xl sm:p-6">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-wider text-blue-600">
+                  Package Management
+                </p>
+
+                <h2 className="mt-1 text-xl font-extrabold text-slate-900">
+                  Edit Package
+                </h2>
+              </div>
+
+              <button
+                type="button"
+                onClick={closeEdit}
+                disabled={saving}
+                className="rounded-xl px-3 py-2 text-sm font-bold text-slate-400 hover:bg-slate-100 disabled:opacity-50"
+              >
+                Close
+              </button>
+            </div>
+
+            <div className="mt-6 space-y-4">
+              <div>
+                <label className="text-sm font-bold text-slate-700">
+                  Package Name
+                </label>
+
+                <input
+                  type="text"
+                  value={editingPackage.name}
+                  onChange={(e) =>
+                    setEditingPackage({
+                      ...editingPackage,
+                      name: e.target.value,
+                    })
+                  }
+                  className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-50"
+                />
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <label className="text-sm font-bold text-slate-700">
+                    Minimum USD
+                  </label>
+
+                  <input
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    value={editingPackage.min_usd}
+                    onChange={(e) =>
+                      setEditingPackage({
+                        ...editingPackage,
+                        min_usd: e.target.value,
+                      })
+                    }
+                    className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-50"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-sm font-bold text-slate-700">
+                    Maximum USD
+                  </label>
+
+                  <input
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    value={editingPackage.max_usd}
+                    onChange={(e) =>
+                      setEditingPackage({
+                        ...editingPackage,
+                        max_usd: e.target.value,
+                      })
+                    }
+                    className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-50"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="text-sm font-bold text-slate-700">
+                  Daily ROI %
+                </label>
+
+                <input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value={
+                    editingPackage.displayed_roi_percent
+                  }
+                  onChange={(e) =>
+                    setEditingPackage({
+                      ...editingPackage,
+                      displayed_roi_percent: e.target.value,
+                    })
+                  }
+                  className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-50"
+                />
+              </div>
+
+              <label className="flex items-center justify-between rounded-xl bg-slate-50 p-4">
+                <div>
+                  <p className="text-sm font-bold text-slate-800">
+                    Package Status
+                  </p>
+
+                  <p className="mt-1 text-xs text-slate-500">
+                    Allow subscribers to use this package.
+                  </p>
+                </div>
+
+                <input
+                  type="checkbox"
+                  checked={editingPackage.is_active}
+                  onChange={(e) =>
+                    setEditingPackage({
+                      ...editingPackage,
+                      is_active: e.target.checked,
+                    })
+                  }
+                  className="h-5 w-5"
+                />
+              </label>
+            </div>
+
+            <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-end">
+              <button
+                type="button"
+                onClick={closeEdit}
+                disabled={saving}
+                className="rounded-xl border border-slate-200 px-5 py-3 text-sm font-bold text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+              >
+                Cancel
+              </button>
+
+              <button
+                type="button"
+                onClick={() => void savePackage()}
+                disabled={saving}
+                className="rounded-xl bg-blue-600 px-5 py-3 text-sm font-bold text-white hover:bg-blue-700 disabled:opacity-50"
+              >
+                {saving ? "Saving..." : "Save Changes"}
+              </button>
+            </div>
           </div>
-        ))}
-      </div>
+        </div>
+      )}
     </div>
   );
 }

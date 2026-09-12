@@ -413,18 +413,17 @@ function Header() {
     <header className="border-b border-slate-800 bg-slate-900">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-5 sm:px-6">
         <a
-          href="/"
           className="text-xl font-extrabold tracking-tight text-white"
         >
           BLUESTONIE
         </a>
 
         <a
-          href="/"
-          className="text-sm font-semibold text-slate-300 hover:text-white"
-        >
-          Back to Home
-        </a>
+  href="/dashboard"
+  className="text-sm font-semibold text-slate-300 hover:text-white"
+>
+  Back to Dashboard
+</a>
       </div>
 
       <div className="mx-auto max-w-6xl px-5 pb-10 pt-8 sm:px-6">

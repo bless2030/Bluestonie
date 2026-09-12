@@ -815,7 +815,12 @@ const withdrawableProfitUgx = Math.round(
 
 <button
   type="button"
-  onClick={() => setSidebarOpen(false)}
+  onClick={() => {
+    setSidebarOpen(false);
+    document.getElementById("activities")?.scrollIntoView({
+      behavior: "smooth",
+    });
+  }}
   className="w-full rounded-lg px-3 py-3 text-left text-sm font-semibold text-white hover:bg-slate-800"
 >
   Daily Activities
@@ -827,7 +832,12 @@ const withdrawableProfitUgx = Math.round(
 
 <button
   type="button"
-  onClick={() => setSidebarOpen(false)}
+  onClick={() => {
+    setSidebarOpen(false);
+    document.getElementById("referrals")?.scrollIntoView({
+      behavior: "smooth",
+    });
+  }}
   className="w-full rounded-lg px-3 py-3 text-left text-sm font-semibold text-white hover:bg-slate-800"
 >
   My Referrals
@@ -839,10 +849,21 @@ const withdrawableProfitUgx = Math.round(
 
 <button
   type="button"
-  onClick={() => setSidebarOpen(false)}
-  className="w-full rounded-lg px-3 py-3 text-left text-sm font-semibold text-white hover:bg-slate-800"
+  onClick={() => {
+    setSidebarOpen(false);
+    document.getElementById("notices")?.scrollIntoView({
+      behavior: "smooth",
+    });
+  }}
+  className="flex w-full items-center justify-between rounded-lg px-3 py-3 text-left text-sm font-semibold text-white hover:bg-slate-800"
 >
-  Notices
+  <span>Notices</span>
+
+  {notices.length > 0 && (
+    <span className="rounded-full bg-blue-600 px-2 py-0.5 text-[10px] font-extrabold text-white">
+      {notices.length}
+    </span>
+  )}
 </button>
 
 <button
@@ -1456,7 +1477,7 @@ const withdrawableProfitUgx = Math.round(
         </section>
 
         {/* REFERRALS */}
-<section className="mt-6">
+<section id="referrals" className="mt-6">
   <div className="mb-3">
     <h2 className="text-lg font-extrabold text-slate-900">
       Referral & Earnings
@@ -1623,10 +1644,10 @@ const withdrawableProfitUgx = Math.round(
 
         {/* NOTICES */}
         {notices.length > 0 && (
-          <section className="mt-6">
+          <section id="notices" className="mt-6">
             <div className="mb-3">
               <h2 className="text-lg font-extrabold text-slate-900">
-                Messages & Notices
+                Messages
               </h2>
 
               <p className="text-xs text-slate-500">
@@ -1662,7 +1683,7 @@ const withdrawableProfitUgx = Math.round(
        
 
         {/* DAILY TASKS */}
-        <section className="mt-7">
+        <section id="activities" className="mt-7">
           <div className="flex items-end justify-between">
             <div>
               <h2 className="text-lg font-extrabold text-slate-900">
@@ -1768,7 +1789,7 @@ const withdrawableProfitUgx = Math.round(
                 </p>
               </div>
 
-              <div className="text-sm font-extrabold text-blue-700">
+              <div className="text-sm font-extrabold text-blue-600">
                 ${totalDeposits.toFixed(2)} total
               </div>
             </div>
