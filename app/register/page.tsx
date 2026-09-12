@@ -161,7 +161,7 @@ function RegisterForm() {
             <div>
               <label
                 htmlFor="fullName"
-                className="text-sm font-semibold text-slate-700 dark:text-slate-200"
+                className="text-sm font-semibold text-slate-700"
               >
                 Full name
               </label>
@@ -174,7 +174,7 @@ function RegisterForm() {
                 onChange={handleChange}
                 placeholder="Enter your full name"
                 autoComplete="name"
-                className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-base text-slate-900 outline-none placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-600 dark:bg-[#0B1120] dark:text-white dark:placeholder:text-slate-300 dark:focus:border-blue-400 dark:focus:ring-2 dark:focus:ring-blue-950"
+                className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-base text-slate-900 outline-none placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
               />
             </div>
 
@@ -182,7 +182,7 @@ function RegisterForm() {
             <div>
               <label
                 htmlFor="phone"
-                className="text-sm font-semibold text-slate-700 dark:text-slate-200"
+                className="text-sm font-semibold text-slate-700"
               >
                 Phone number
               </label>
@@ -195,7 +195,7 @@ function RegisterForm() {
                 onChange={handleChange}
                 placeholder="e.g. 0700 000 000"
                 autoComplete="tel"
-                className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-base text-slate-900 outline-none placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-600 dark:bg-[#0B1120] dark:text-white dark:placeholder:text-slate-300 dark:focus:border-blue-400 dark:focus:ring-2 dark:focus:ring-blue-950"
+                className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-base text-slate-900 outline-none placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
               />
             </div>
 
@@ -203,7 +203,7 @@ function RegisterForm() {
             <div>
               <label
                 htmlFor="email"
-                className="text-sm font-semibold text-slate-700 dark:text-slate-200"
+                className="text-sm font-semibold text-slate-700"
               >
                 Email address
               </label>
@@ -216,7 +216,7 @@ function RegisterForm() {
                 onChange={handleChange}
                 placeholder="you@example.com"
                 autoComplete="email"
-                className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-base text-slate-900 outline-none placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-600 dark:bg-[#0B1120] dark:text-white dark:placeholder:text-slate-300 dark:focus:border-blue-400 dark:focus:ring-2 dark:focus:ring-blue-950"
+                className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-base text-slate-900 outline-none placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
               />
             </div>
 
@@ -224,7 +224,7 @@ function RegisterForm() {
             <div>
               <label
                 htmlFor="password"
-                className="text-sm font-semibold text-slate-700 dark:text-slate-200"
+                className="text-sm font-semibold text-slate-700"
               >
                 Password
               </label>
@@ -237,7 +237,7 @@ function RegisterForm() {
                 onChange={handleChange}
                 placeholder="Create a password"
                 autoComplete="new-password"
-                className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-base text-slate-900 outline-none placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-600 dark:bg-[#0B1120] dark:text-white dark:placeholder:text-slate-300 dark:focus:border-blue-400 dark:focus:ring-2 dark:focus:ring-blue-950"
+                className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-base text-slate-900 outline-none placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
               />
             </div>
 
@@ -245,7 +245,7 @@ function RegisterForm() {
             <div>
               <label
                 htmlFor="confirmPassword"
-                className="text-sm font-semibold text-slate-700 dark:text-slate-200"
+                className="text-sm font-semibold text-slate-700"
               >
                 Confirm password
               </label>
@@ -258,7 +258,7 @@ function RegisterForm() {
                 onChange={handleChange}
                 placeholder="Confirm your password"
                 autoComplete="new-password"
-                className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-base text-slate-900 outline-none placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-600 dark:bg-[#0B1120] dark:text-white dark:placeholder:text-slate-300 dark:focus:border-blue-400 dark:focus:ring-2 dark:focus:ring-blue-950"
+                className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-base text-slate-900 outline-none placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
               />
             </div>
 

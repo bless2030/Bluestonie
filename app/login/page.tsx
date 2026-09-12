@@ -164,7 +164,7 @@ export default function LoginPage() {
                 onChange={handleChange}
                 placeholder="you@example.com"
                 autoComplete="email"
-                className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-base text-slate-900 outline-none placeholder:text-slate-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-100 dark:border-slate-600 dark:bg-[#0B1120] dark:text-white dark:placeholder:text-slate-300 dark:focus:border-blue-400 dark:focus:ring-blue-600"
+                className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-base text-slate-900 outline-none placeholder:text-slate-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
               />
             </div>
 
@@ -184,7 +184,7 @@ export default function LoginPage() {
                 onChange={handleChange}
                 placeholder="Enter your password"
                 autoComplete="current-password"
-                className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-base text-slate-900 outline-none placeholder:text-slate-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-100 dark:border-slate-600 dark:bg-[#0B1120] dark:text-white dark:placeholder:text-slate-300 dark:focus:border-blue-400 dark:focus:ring-blue-600"
+                className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-base text-slate-900 outline-none placeholder:text-slate-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
               />
             </div>
 
