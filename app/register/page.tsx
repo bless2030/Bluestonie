@@ -49,69 +49,160 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   }
 
   async function handleRegister(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
+  e.preventDefault();
 
-    setError("");
-    setMessage("");
+  setError("");
+  setMessage("");
 
-    if (
-      !form.fullName ||
-      !form.phone ||
-      !form.email ||
-      !form.password ||
-      !form.confirmPassword
-    ) {
-      setError("Please complete all fields.");
-      return;
-    }
+  if (
+    !form.fullName ||
+    !form.phone ||
+    !form.email ||
+    !form.password ||
+    !form.confirmPassword
+  ) {
+    setError("Please complete all fields.");
+    return;
+  }
 
-    if (form.password !== form.confirmPassword) {
-      setError("Passwords do not match.");
-      return;
-    }
+  if (form.password !== form.confirmPassword) {
+    setError("Passwords do not match.");
+    return;
+  }
 
-    if (form.password.length < 6) {
-      setError("Password must contain at least 6 characters.");
-      return;
-    }
+  if (form.password.length < 6) {
+    setError("Password must contain at least 6 characters.");
+    return;
+  }
 
-    if (!agreedToTerms) {
-  setError("Please agree to the Terms & Conditions and applicable policies.");
+  if (!agreedToTerms) {
+    setError("Please agree to the Terms & Conditions and applicable policies.");
+    return;
+  }
+
+  const phoneLocal = form.phone.replace(/\D/g, "");
+
+// Allowed Ugandan mobile prefixes
+const allowedPrefixes = [
+  "70",
+  "73",
+  "74",
+  "75",
+  "76",
+  "77",
+  "78",
+  "79",
+];
+
+if (
+  phoneLocal.length !== 9 ||
+  !allowedPrefixes.some((prefix) => phoneLocal.startsWith(prefix))
+) {
+  setError(
+    "Please enter valid Number."
+  );
+  setLoading(false);
   return;
 }
 
-    setLoading(true);
+// Store in international format
+const phoneNormalized = "256" + phoneLocal;
 
-    const { data, error } = await supabase.auth.signUp({
-      email: form.email.trim(),
-      password: form.password,
-      options: {
-        data: {
-          full_name: form.fullName.trim(),
-          phone: form.phone.trim(),
-          country: "Uganda",
-          referral_code: referralCode || null,
-        },
-      },
-    });
-
-    if (error) {
-      setError(error.message);
-      setLoading(false);
-      return;
-    }
-
-    setLoading(false);
-
-    if (data.session) {
-      router.push("/dashboard");
-      return;
-    }
-
-    setMessage(
-      "Account created successfully. Please check your email to confirm your account. If you do not see theverification email in your inbox, please check your Spam, Junk,or Promotions folder. "
-    );
+  if (!/^2567\d{8}$/.test(phoneNormalized)) {
+    setError("Please enter a valid Ugandan mobile phone number.");
+    return;
   }
+
+  setLoading(true);
+
+  const { data: phoneExists, error: phoneCheckError } = await supabase.rpc(
+  "phone_already_registered",
+  {
+    p_phone_normalized: phoneNormalized,
+  }
+);
+
+if (phoneCheckError) {
+  setError("Unable to check the phone number. Please try again.");
+  setLoading(false);
+  return;
+}
+
+if (phoneExists === true) {
+  setError(
+    "This phone number is already registered. Please use a different number or log in to your existing account."
+  );
+  setLoading(false);
+  return;
+}
+
+ // Check existing email
+const email = form.email.trim().toLowerCase();
+
+const { data: emailExists, error: emailCheckError } =
+  await supabase.rpc("email_already_registered", {
+    p_email: email,
+  });
+
+if (emailCheckError) {
+  setError("Unable to check the email address. Please try again.");
+  setLoading(false);
+  return;
+}
+
+if (emailExists === true) {
+  setError(
+    "This email address is already registered. Please use a different email or log in to your existing account."
+  );
+  setLoading(false);
+  return;
+}
+
+// Create account
+const { data, error } = await supabase.auth.signUp({
+  email,
+  password: form.password,
+  options: {
+    data: {
+      full_name: form.fullName.trim(),
+      phone: phoneNormalized,
+      country: "Uganda",
+      referral_code: referralCode || null,
+    },
+  },
+});
+
+if (error) {
+  const errorMessage = error.message.toLowerCase();
+
+  if (
+    errorMessage.includes("already registered") ||
+    errorMessage.includes("already exists") ||
+    errorMessage.includes("duplicate") ||
+    errorMessage.includes("unique")
+  ) {
+    setError(
+      "This email or phone number is already registered. Please log in or use different details."
+    );
+  } else {
+    setError(error.message);
+  }
+
+  setLoading(false);
+  return;
+}
+
+setLoading(false);
+
+if (data.session) {
+  router.push("/dashboard");
+  return;
+}
+
+  setMessage(
+    "Account created successfully. Please check your email to confirm your account. If you do not see the verification email in your inbox, please check your Spam, Junk, or Promotions folder."
+  );
+}
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-slate-50 px-4 py-8">
@@ -182,25 +273,46 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
             </div>
 
             {/* Phone */}
-            <div>
-              <label
-                htmlFor="phone"
-                className="text-sm font-semibold text-slate-700"
-              >
-                Phone number
-              </label>
+<div>
+  <label
+    htmlFor="phone"
+    className="text-sm font-semibold text-slate-700"
+  >
+    Phone number
+  </label>
 
-              <input
-                id="phone"
-                name="phone"
-                type="tel"
-                value={form.phone}
-                onChange={handleChange}
-                placeholder="e.g. 0700 000 000"
-                autoComplete="tel"
-                className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-base text-slate-900 outline-none placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-              />
-            </div>
+  <div className="mt-2 flex">
+    <div className="flex items-center rounded-l-xl border border-r-0 border-slate-300 bg-slate-100 px-4 text-base font-semibold text-slate-700">
+      +256
+    </div>
+
+    <input
+      id="phone"
+      name="phone"
+      type="tel"
+      inputMode="numeric"
+      maxLength={9}
+      value={form.phone}
+      onChange={(e) => {
+        const value = e.target.value
+          .replace(/\D/g, "")
+          .slice(0, 9);
+
+        setForm({
+          ...form,
+          phone: value,
+        });
+      }}
+      placeholder="701234567"
+      autoComplete="tel-national"
+      className="w-full rounded-r-xl border border-slate-300 bg-white px-4 py-3 text-base text-slate-900 outline-none placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+    />
+  </div>
+
+  <p className="mt-1.5 text-xs text-slate-500">
+    Enter 9 digits starting with 70–79.
+  </p>
+</div>
 
             {/* Email */}
             <div>
