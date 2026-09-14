@@ -43,6 +43,260 @@ type Referral = {
   }[] | null;
 };
 
+type AdminDashboardStats = {
+  total_users: number;
+  active_users: number;
+  dormant_users: number;
+  new_users_today: number;
+
+  total_deposits: number;
+  pending_deposits: number;
+  rejected_deposits: number;
+  today_deposits: number;
+
+  total_withdrawals: number;
+  pending_withdrawals: number;
+  rejected_withdrawals: number;
+  withdrawal_fees: number;
+  today_withdrawals: number;
+
+  total_returns: number;
+  today_returns: number;
+  return_records: number;
+
+  total_referral_commission: number;
+  completed_referral_commission: number;
+  pending_referral_commission: number;
+  pending_referrals: number;
+
+  total_invested: number;
+  active_investments: number;
+  active_capital: number;
+  locked_capital: number;
+  completed_investments: number;
+  earned_investment_returns: number;
+
+  wallet_balance: number;
+  total_wallet_deposited: number;
+  total_wallet_invested: number;
+  total_wallet_returns: number;
+  total_wallet_withdrawn: number;
+
+  tasks_completed_today: number;
+  users_completed_all_tasks_today: number;
+  users_with_tasks_today: number;
+
+  users_with_active_investments: number;
+  users_never_deposited: number;
+  users_never_invested: number;
+
+  completed_tasks_0_5_today: number;
+  completed_tasks_1_4_today: number;
+  completed_tasks_5_5_today: number;
+
+  net_deposits: number;
+  uninvested_capital: number;
+};
+
+function formatDate(value: string | null | undefined) {
+  if (!value) return "—";
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return "—";
+  }
+
+  return date.toLocaleString();
+}
+
+function getStatusStyle(status: string | null | undefined) {
+  const value = (status || "").toLowerCase();
+
+  if (value === "approved" || value === "completed" || value === "verified") {
+    return "bg-green-50 text-green-700";
+  }
+
+  if (value === "pending") {
+    return "bg-amber-50 text-amber-700";
+  }
+
+  if (value === "rejected" || value === "failed") {
+    return "bg-red-50 text-red-700";
+  }
+
+  return "bg-slate-100 text-slate-600";
+}
+
+function getStatusLabel(status: string | null | undefined) {
+  if (!status) return "Unknown";
+
+  return status
+    .replace(/_/g, " ")
+    .replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
+
+function PageIntro({
+  eyebrow,
+  title,
+  description,
+}: {
+  eyebrow: string;
+  title: string;
+  description: string;
+}) {
+  return (
+    <div>
+      <p className="text-xs font-bold uppercase tracking-wider text-blue-600">
+        {eyebrow}
+      </p>
+
+      <h2 className="mt-1 text-2xl font-extrabold text-slate-900">
+        {title}
+      </h2>
+
+      <p className="mt-1 text-sm leading-6 text-slate-500">
+        {description}
+      </p>
+    </div>
+  );
+}
+
+function AdminStat({
+  title,
+  value,
+  icon,
+  detail,
+  className = "bg-white",
+}: {
+  title: string;
+  value: string;
+  icon: string;
+  detail: string;
+  className?: string;
+}) {
+  return (
+    <div
+      className={`rounded-2xl p-4 shadow-sm ring-1 ring-slate-200 sm:p-4 ${className}`}
+    >
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="truncate text-[10px] font-bold uppercase tracking-wide text-slate-500">
+            {title}
+          </p>
+
+          <p className="mt-2 text-xl font-extrabold text-slate-900 sm:text-2xl">
+            {value}
+          </p>
+
+          <p className="mt-1 truncate text-[11px] text-slate-500">
+            {detail}
+          </p>
+        </div>
+
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white/70 text-sm font-extrabold text-slate-700 shadow-sm">
+          {icon}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function SmallStat({
+  title,
+  value,
+}: {
+  title: string;
+  value: string;
+}) {
+  return (
+    <div className="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-200">
+      <p className="text-xs font-bold uppercase tracking-wide text-slate-500">
+        {title}
+      </p>
+
+      <p className="mt-2 text-2xl font-extrabold text-slate-900">
+        {value}
+      </p>
+    </div>
+  );
+}
+
+function StatusBadge({
+  status,
+}: {
+  status: string | null | undefined;
+}) {
+  return (
+    <span
+      className={`mt-2 inline-flex rounded-full px-2.5 py-1 text-[10px] font-extrabold uppercase ${getStatusStyle(
+        status
+      )}`}
+    >
+      {getStatusLabel(status)}
+    </span>
+  );
+}
+
+function Rule({
+  label,
+  value,
+}: {
+  label: string;
+  value: string;
+}) {
+  return (
+    <div className="flex items-center justify-between gap-4 border-b border-slate-800 pb-3 last:border-0 last:pb-0">
+      <span className="text-sm text-slate-400">{label}</span>
+
+      <span className="text-sm font-extrabold text-white">
+        {value}
+      </span>
+    </div>
+  );
+}
+
+function InfoBox({
+  label,
+  value,
+}: {
+  label: string;
+  value: string;
+}) {
+  return (
+    <div className="rounded-xl bg-slate-50 p-4">
+      <p className="text-xs font-bold uppercase tracking-wide text-slate-400">
+        {label}
+      </p>
+
+      <p className="mt-1 break-words text-sm font-extrabold text-slate-900">
+        {value}
+      </p>
+    </div>
+  );
+}
+
+function MenuIcon({ item }: { item: string }) {
+  const icons: Record<string, string> = {
+    Overview: "⌂",
+    Deposits: "↓",
+    "Deposit Settings": "⚙",
+    Withdrawals: "↑",
+    Referrals: "↗",
+    Users: "♙",
+    Packages: "▣",
+    "Daily Tasks": "✓",
+    Notices: "!",
+    Transactions: "▤",
+  };
+
+  return (
+    <span className="flex h-5 w-5 shrink-0 items-center justify-center text-sm">
+      {icons[item] || "•"}
+    </span>
+  );
+}
+
 const menuItems = [
   "Overview",
   "Deposits",
@@ -70,6 +324,12 @@ export default function AdminPage() {
 
   const [referrals, setReferrals] = useState<Referral[]>([]);
 const [loadingReferrals, setLoadingReferrals] = useState(false);
+
+const [overviewStats, setOverviewStats] =
+  useState<AdminDashboardStats | null>(null);
+
+const [loadingOverviewStats, setLoadingOverviewStats] =
+  useState(false);
 
   const [toast, setToast] = useState<Toast | null>(null);
   const [search, setSearch] = useState("");
@@ -291,6 +551,25 @@ const saveDepositSettings = useCallback(async () => {
   showToast,
 ]);
 
+const loadOverviewStats = useCallback(async () => {
+  setLoadingOverviewStats(true);
+
+  const { data, error } = await supabase.rpc(
+    "get_admin_dashboard_stats"
+  );
+
+  if (error) {
+    console.error("ADMIN DASHBOARD STATS ERROR:", error);
+    showToast("error", error.message);
+    setOverviewStats(null);
+    setLoadingOverviewStats(false);
+    return;
+  }
+
+  setOverviewStats(data as AdminDashboardStats);
+  setLoadingOverviewStats(false);
+}, [showToast]);
+
   useEffect(() => {
     let cancelled = false;
 
@@ -327,6 +606,7 @@ setCheckingAdmin(false);
 
 await loadDeposits();
 await loadReferrals();
+await loadOverviewStats();
     }
 
     void verifyAdministrator();
@@ -334,7 +614,12 @@ await loadReferrals();
     return () => {
       cancelled = true;
     };
-  }, [loadDeposits, loadReferrals, router]);
+  }, [
+  loadDeposits,
+  loadReferrals,
+  loadOverviewStats,
+  router,
+]);
 
   if (checkingAdmin || !isAdminAuthorized) {
     return (
@@ -580,12 +865,12 @@ const totalReferralCommissionUgx = referrals.reduce(
         {/* Content */}
         <div className="mx-auto max-w-7xl p-4 sm:p-6">
           {activeSection === "Overview" && (
-            <Overview
-              deposits={deposits}
-              pendingDeposits={pendingDeposits.length}
-              totalVerified={totalVerified}
-              onDeposits={() => setActiveSection("Deposits")}
-            />
+<Overview
+  deposits={deposits}
+  onDeposits={() => setActiveSection("Deposits")}
+  stats={overviewStats}
+  loadingStats={loadingOverviewStats}
+/>
           )}
 
           {activeSection === "Deposits" && (
@@ -1015,147 +1300,497 @@ function DepositSettings({
 
 function Overview({
   deposits,
-  pendingDeposits,
-  totalVerified,
   onDeposits,
+  stats,
+  loadingStats,
 }: {
   deposits: Deposit[];
-  pendingDeposits: number;
-  totalVerified: number;
   onDeposits: () => void;
+  stats: AdminDashboardStats | null;
+  loadingStats: boolean;
 }) {
+  const money = (value: number | undefined) =>
+    `$${Number(value || 0).toFixed(2)}`;
+
   return (
     <div>
       <PageIntro
         eyebrow="Overview"
         title="Platform Overview"
-        description="Monitor the main activity of the BLUESTONIE platform."
+        description="Monitor the main activity and financial position of BLUESTONIE."
       />
 
-      <div className="mt-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <AdminStat
-          title="Deposit Requests"
-          value={String(deposits.length)}
-          icon="↓"
-          detail="Total submitted"
-        />
+      {/* COMMAND SUMMARY */}
+      <div className="mt-5 rounded-2xl bg-slate-900 p-4 text-white shadow-sm sm:p-5">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="text-[11px] font-bold uppercase tracking-wider text-blue-300">
+              BLUESTONIE Command Center
+            </p>
 
-        <AdminStat
-          title="Pending Deposits"
-          value={String(pendingDeposits)}
-          icon="!"
-          detail="Need review"
-        />
-
-        <AdminStat
-          title="Verified Deposits"
-          value={`$${totalVerified.toFixed(2)}`}
-          icon="✓"
-          detail="Verified amount"
-        />
-
-        <AdminStat
-          title="System"
-          value="Online"
-          icon="●"
-          detail="Supabase connected"
-        />
-      </div>
-
-      <div className="mt-6 grid gap-5 lg:grid-cols-3">
-        <div className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-200 lg:col-span-2">
-          <div className="flex items-center justify-between gap-3">
-            <div>
-              <h2 className="font-extrabold">Recent Deposits</h2>
-
-              <p className="mt-1 text-xs text-slate-400">
-                Latest deposit requests
-              </p>
-            </div>
-
-            <button
-              type="button"
-              onClick={onDeposits}
-              className="text-xs font-bold text-blue-600"
-            >
-              View all
-            </button>
+            <h2 className="mt-1 text-lg font-extrabold">
+              Platform at a glance
+            </h2>
           </div>
 
-          <div className="mt-5 space-y-3">
-            {deposits.slice(0, 5).map((deposit) => (
-              <div
-                key={deposit.id}
-                className="flex items-center justify-between gap-3 rounded-xl bg-slate-50 p-3"
-              >
-                <div className="min-w-0">
-  <p className="truncate text-sm font-extrabold text-slate-900">
-    {deposit.profiles?.full_name || "Unknown depositor"}
-  </p>
-
-  <p className="mt-1 text-xs text-slate-500">
-    {deposit.profiles?.phone || "No phone number"}
-  </p>
-
-  <p className="mt-1 text-xs text-slate-400">
-    {deposit.profiles?.country || "No country"}
-  </p>
-
-  <p className="mt-1 text-xs text-slate-400">
-    Reference: {deposit.reference || "No reference"}
-  </p>
-
-  <p className="mt-1 text-xs text-slate-400">
-    Submitted: {formatDate(deposit.submitted_at)}
-  </p>
-</div>
-
-                <div className="shrink-0 text-right">
-                  <p className="font-extrabold">
-                    ${Number(deposit.amount_usd || 0).toFixed(2)}
-                  </p>
-
-                  <StatusBadge status={deposit.status} />
-                </div>
-              </div>
-            ))}
-
-            {deposits.length === 0 && (
-              <p className="py-5 text-center text-sm text-slate-400">
-                No deposits found.
-              </p>
-            )}
+          <div className="flex items-center gap-2 text-xs font-bold text-green-300">
+            <span className="h-2 w-2 rounded-full bg-green-400" />
+            System Online
           </div>
         </div>
 
-        <div className="rounded-2xl bg-slate-950 p-5 text-white shadow-sm">
-          <p className="text-xs font-bold uppercase tracking-wider text-blue-400">
-            Platform Settings
-          </p>
+        <div className="mt-5 grid grid-cols-2 gap-3 lg:grid-cols-4">
+          <div className="rounded-xl bg-white/10 p-3">
+            <p className="text-[10px] font-bold uppercase text-slate-400">
+              Users
+            </p>
+            <p className="mt-1 text-xl font-extrabold">
+              {stats?.total_users ?? 0}
+            </p>
+          </div>
 
-          <h2 className="mt-2 text-xl font-extrabold">
-            Current Rules
+          <div className="rounded-xl bg-white/10 p-3">
+            <p className="text-[10px] font-bold uppercase text-slate-400">
+              Deposits
+            </p>
+            <p className="mt-1 text-xl font-extrabold">
+              {money(stats?.total_deposits)}
+            </p>
+          </div>
+
+          <div className="rounded-xl bg-white/10 p-3">
+            <p className="text-[10px] font-bold uppercase text-slate-400">
+              Invested
+            </p>
+            <p className="mt-1 text-xl font-extrabold">
+              {money(stats?.total_invested)}
+            </p>
+          </div>
+
+          <div className="rounded-xl bg-white/10 p-3">
+            <p className="text-[10px] font-bold uppercase text-slate-400">
+              Net Flow
+            </p>
+            <p className="mt-1 text-xl font-extrabold">
+              {money(stats?.net_deposits)}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* USERS */}
+      <section className="mt-6">
+        <div className="mb-3 flex items-center justify-between">
+          <h2 className="text-sm font-extrabold text-slate-800">
+            Users
           </h2>
 
-          <div className="mt-5 space-y-3">
-            <Rule
-              label="Accounting rate"
-              value="1 USD = 4,000 UGX"
-            />
+          {loadingStats && (
+            <span className="text-[11px] font-semibold text-slate-400">
+              Updating...
+            </span>
+          )}
+        </div>
 
-            <Rule label="Daily activities" value="5" />
+        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+          <AdminStat
+            title="Total Users"
+            value={String(stats?.total_users ?? 0)}
+            icon="◎"
+            detail="Registered"
+            className="bg-blue-50"
+          />
 
-            <Rule label="Withdrawal fee" value="5%" />
+          <AdminStat
+            title="Active"
+            value={String(stats?.active_users ?? 0)}
+            icon="●"
+            detail="Active accounts"
+            className="bg-green-50"
+          />
 
-            <Rule label="Capital lock" value="2 months" />
+          <AdminStat
+            title="Dormant"
+            value={String(stats?.dormant_users ?? 0)}
+            icon="○"
+            detail="Inactive accounts"
+            className="bg-amber-50"
+          />
 
-            <Rule label="Minimum investment" value="$10" />
+          <AdminStat
+            title="New Today"
+            value={String(stats?.new_users_today ?? 0)}
+            icon="+"
+            detail="Today's registrations"
+            className="bg-violet-50"
+          />
+        </div>
+      </section>
 
-            <Rule label="Maximum investment" value="$500" />
+      {/* FINANCIAL */}
+      <section className="mt-6">
+        <h2 className="mb-3 text-sm font-extrabold text-slate-800">
+          Financial Overview
+        </h2>
+
+        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+          <AdminStat
+            title="Deposits"
+            value={money(stats?.total_deposits)}
+            icon="↓"
+            detail="Verified"
+            className="bg-emerald-50"
+          />
+
+          <AdminStat
+            title="Withdrawals"
+            value={money(stats?.total_withdrawals)}
+            icon="↑"
+            detail="Paid out"
+            className="bg-rose-50"
+          />
+
+          <AdminStat
+            title="Returns"
+            value={money(stats?.total_returns)}
+            icon="↗"
+            detail="Credited ROI"
+            className="bg-purple-50"
+          />
+
+          <AdminStat
+            title="Referral Money"
+            value={money(stats?.total_referral_commission)}
+            icon="↗"
+            detail="Commissions"
+            className="bg-yellow-50"
+          />
+        </div>
+      </section>
+
+      {/* CAPITAL */}
+      <section className="mt-6">
+        <h2 className="mb-3 text-sm font-extrabold text-slate-800">
+          Capital & Wallet
+        </h2>
+
+        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+          <AdminStat
+            title="Invested"
+            value={money(stats?.total_invested)}
+            icon="$"
+            detail="All investments"
+            className="bg-sky-50"
+          />
+
+          <AdminStat
+            title="Active Capital"
+            value={money(stats?.active_capital)}
+            icon="◆"
+            detail="Active investments"
+            className="bg-green-50"
+          />
+
+          <AdminStat
+            title="Locked Capital"
+            value={money(stats?.locked_capital)}
+            icon="▣"
+            detail="Under lock"
+            className="bg-orange-50"
+          />
+
+          <AdminStat
+            title="Wallet Balance"
+            value={money(stats?.wallet_balance)}
+            icon="□"
+            detail="Subscriber wallets"
+            className="bg-indigo-50"
+          />
+        </div>
+      </section>
+
+      {/* BUSINESS INTELLIGENCE */}
+      <section className="mt-6">
+        <h2 className="mb-3 text-sm font-extrabold text-slate-800">
+          Business Intelligence
+        </h2>
+
+        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+          <AdminStat
+            title="Uninvested"
+            value={money(stats?.uninvested_capital)}
+            icon="◇"
+            detail="Deposits not invested"
+            className="bg-cyan-50"
+          />
+
+          <AdminStat
+            title="Fees Collected"
+            value={money(stats?.withdrawal_fees)}
+            icon="%"
+            detail="Withdrawal fees"
+            className="bg-slate-100"
+          />
+
+          <AdminStat
+            title="Active Investments"
+            value={String(stats?.active_investments ?? 0)}
+            icon="◆"
+            detail="Currently active"
+            className="bg-teal-50"
+          />
+
+          <AdminStat
+            title="Completed"
+            value={String(stats?.completed_investments ?? 0)}
+            icon="✓"
+            detail="Completed investments"
+            className="bg-lime-50"
+          />
+        </div>
+      </section>
+
+      {/* ACTION REQUIRED */}
+      <section className="mt-6">
+        <h2 className="mb-3 text-sm font-extrabold text-slate-800">
+          Action Required
+        </h2>
+
+        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+          <AdminStat
+            title="Pending Deposits"
+            value={String(stats?.pending_deposits ?? 0)}
+            icon="!"
+            detail="Need verification"
+            className="bg-amber-50"
+          />
+
+          <AdminStat
+            title="Pending Withdrawals"
+            value={String(stats?.pending_withdrawals ?? 0)}
+            icon="!"
+            detail="Need review"
+            className="bg-red-50"
+          />
+
+          <AdminStat
+            title="Pending Referrals"
+            value={String(stats?.pending_referrals ?? 0)}
+            icon="↗"
+            detail="Awaiting action"
+            className="bg-violet-50"
+          />
+
+          <AdminStat
+            title="5/5 Tasks"
+            value={String(stats?.completed_tasks_5_5_today ?? 0)}
+            icon="✓"
+            detail="Completed today"
+            className="bg-blue-50"
+          />
+        </div>
+      </section>
+
+      {/* USER OPPORTUNITIES */}
+      <section className="mt-6">
+        <h2 className="mb-3 text-sm font-extrabold text-slate-800">
+          User Opportunities
+        </h2>
+
+        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+          <AdminStat
+            title="Never Deposited"
+            value={String(stats?.users_never_deposited ?? 0)}
+            icon="○"
+            detail="Potential subscribers"
+            className="bg-orange-50"
+          />
+
+          <AdminStat
+            title="Never Invested"
+            value={String(stats?.users_never_invested ?? 0)}
+            icon="◇"
+            detail="Deposited but not invested"
+            className="bg-cyan-50"
+          />
+
+          <AdminStat
+            title="With Investments"
+            value={String(stats?.users_with_active_investments ?? 0)}
+            icon="◆"
+            detail="Active investors"
+            className="bg-green-50"
+          />
+
+          <AdminStat
+            title="Tasks Today"
+            value={String(stats?.tasks_completed_today ?? 0)}
+            icon="✓"
+            detail="Task completions"
+            className="bg-purple-50"
+          />
+        </div>
+      </section>
+
+      {/* TODAY */}
+      <section className="mt-6">
+        <h2 className="mb-3 text-sm font-extrabold text-slate-800">
+          Today's Activity
+        </h2>
+
+        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+          <AdminStat
+            title="Deposits Today"
+            value={money(stats?.today_deposits)}
+            icon="↓"
+            detail="Verified today"
+            className="bg-emerald-50"
+          />
+
+          <AdminStat
+            title="Withdrawals Today"
+            value={money(stats?.today_withdrawals)}
+            icon="↑"
+            detail="Approved today"
+            className="bg-rose-50"
+          />
+
+          <AdminStat
+            title="Returns Today"
+            value={money(stats?.today_returns)}
+            icon="↗"
+            detail="ROI credited"
+            className="bg-purple-50"
+          />
+
+          <AdminStat
+            title="New Users"
+            value={String(stats?.new_users_today ?? 0)}
+            icon="+"
+            detail="Registered today"
+            className="bg-blue-50"
+          />
+        </div>
+      </section>
+
+      {/* TASK DISTRIBUTION */}
+      <section className="mt-6">
+        <h2 className="mb-3 text-sm font-extrabold text-slate-800">
+          Today's Task Progress
+        </h2>
+
+        <div className="grid grid-cols-3 gap-3">
+          <AdminStat
+            title="0 / 5"
+            value={String(stats?.completed_tasks_0_5_today ?? 0)}
+            icon="○"
+            detail="No tasks"
+            className="bg-slate-100"
+          />
+
+          <AdminStat
+            title="1–4 / 5"
+            value={String(stats?.completed_tasks_1_4_today ?? 0)}
+            icon="◐"
+            detail="Partially complete"
+            className="bg-amber-50"
+          />
+
+          <AdminStat
+            title="5 / 5"
+            value={String(stats?.completed_tasks_5_5_today ?? 0)}
+            icon="✓"
+            detail="Fully complete"
+            className="bg-green-50"
+          />
+        </div>
+      </section>
+
+      {/* RECENT DEPOSITS */}
+      <div className="mt-6 rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-200">
+        <div className="flex items-center justify-between gap-3">
+          <div>
+            <h2 className="font-extrabold text-slate-900">
+              Recent Deposits
+            </h2>
+
+            <p className="mt-1 text-xs text-slate-400">
+              Latest deposit requests
+            </p>
           </div>
+
+          <button
+            type="button"
+            onClick={onDeposits}
+            className="text-xs font-bold text-blue-600"
+          >
+            View all
+          </button>
+        </div>
+
+        <div className="mt-5 space-y-3">
+          {deposits.slice(0, 5).map((deposit) => (
+            <div
+              key={deposit.id}
+              className="flex items-center justify-between gap-3 rounded-xl bg-slate-50 p-3"
+            >
+              <div className="min-w-0">
+                <p className="truncate text-sm font-extrabold text-slate-900">
+                  {deposit.profiles?.full_name || "Unknown depositor"}
+                </p>
+
+                <p className="mt-1 text-xs text-slate-500">
+                  {deposit.profiles?.phone || "No phone number"}
+                </p>
+
+                <p className="mt-1 text-xs text-slate-400">
+                  {formatDate(deposit.submitted_at)}
+                </p>
+              </div>
+
+              <div className="shrink-0 text-right">
+                <p className="font-extrabold text-slate-900">
+                  {money(Number(deposit.amount_usd || 0))}
+                </p>
+
+                <StatusBadge status={deposit.status} />
+              </div>
+            </div>
+          ))}
+
+          {deposits.length === 0 && (
+            <p className="py-5 text-center text-sm text-slate-400">
+              No deposits found.
+            </p>
+          )}
         </div>
       </div>
 
+      {/* PLATFORM SETTINGS */}
+      <div className="mt-6 rounded-2xl bg-slate-950 p-5 text-white shadow-sm">
+        <p className="text-xs font-bold uppercase tracking-wider text-blue-400">
+          Platform Settings
+        </p>
+
+        <h2 className="mt-2 text-xl font-extrabold">
+          Current Rules
+        </h2>
+
+        <div className="mt-5 space-y-3">
+          <Rule
+            label="Accounting rate"
+            value="1 USD = 4,000 UGX"
+          />
+
+          <Rule label="Daily activities" value="5" />
+          <Rule label="Withdrawal fee" value="5%" />
+          <Rule label="Capital lock" value="2 months" />
+          <Rule label="Minimum investment" value="$10" />
+          <Rule label="Maximum investment" value="$500" />
+        </div>
+      </div>
+
+      {/* ADMINISTRATOR NOTICE */}
       <div className="mt-6 rounded-2xl border border-blue-100 bg-blue-50 p-5">
         <p className="text-xs font-bold uppercase tracking-wider text-blue-600">
           Administrator Notice
@@ -3183,11 +3818,166 @@ function Notices() {
   );
 }
 /* =========================================================
-   TRANSACTIONS
+TRANSACTIONS
 ========================================================= */
 
 function Transactions() {
+  type Transaction = {
+    id: string;
+    user_id: string;
+    type: string;
+    amount_usd: number;
+    amount_ugx: number | null;
+    reference_id: string | null;
+    description: string | null;
+    status: string;
+    created_at: string;
+    email: string | null;
+    full_name: string | null;
+    phone: string | null;
+  };
+
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [search, setSearch] = useState("");
+  const [typeFilter, setTypeFilter] = useState("all");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  const loadTransactions = useCallback(async () => {
+    setLoading(true);
+    setError("");
+
+    const { data, error } = await supabase
+      .from("transactions")
+      .select(`
+        id,
+        user_id,
+        type,
+        amount_usd,
+        amount_ugx,
+        reference_id,
+        description,
+        status,
+        created_at,
+        profiles:user_id (
+          full_name,
+          phone
+        )
+      `)
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error("TRANSACTIONS ERROR:", error);
+      setError(error.message);
+      setTransactions([]);
+      setLoading(false);
+      return;
+    }
+
+    const userIds = [
+      ...new Set(
+        (data || []).map((item) => item.user_id)
+      ),
+    ];
+
+    let emailMap: Record<string, string> = {};
+
+    if (userIds.length > 0) {
+      const { data: authEmails, error: emailError } =
+        await supabase.rpc("get_admin_user_emails", {
+          p_user_ids: userIds,
+        });
+
+      if (emailError) {
+        console.error("TRANSACTION EMAIL ERROR:", emailError);
+      } else {
+        (authEmails || []).forEach(
+          (item: {
+            id: string;
+            email: string | null;
+          }) => {
+            emailMap[item.id] = item.email || "";
+          }
+        );
+      }
+    }
+
+    const formatted = (data || []).map((item) => {
+      const profile = Array.isArray(item.profiles)
+        ? item.profiles[0]
+        : item.profiles;
+
+      return {
+        id: item.id,
+        user_id: item.user_id,
+        type: item.type,
+        amount_usd: Number(item.amount_usd || 0),
+        amount_ugx:
+          item.amount_ugx === null
+            ? null
+            : Number(item.amount_ugx || 0),
+        reference_id: item.reference_id,
+        description: item.description,
+        status: item.status,
+        created_at: item.created_at,
+        email: emailMap[item.user_id] || null,
+        full_name: profile?.full_name || null,
+        phone: profile?.phone || null,
+      };
+    });
+
+    setTransactions(formatted);
+    setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    void loadTransactions();
+  }, [loadTransactions]);
+
+  const filteredTransactions = transactions.filter(
+    (transaction) => {
+      const query = search.toLowerCase().trim();
+
+      const matchesSearch =
+        !query ||
+        (transaction.full_name || "")
+          .toLowerCase()
+          .includes(query) ||
+        (transaction.email || "")
+          .toLowerCase()
+          .includes(query) ||
+        (transaction.phone || "")
+          .toLowerCase()
+          .includes(query) ||
+        transaction.id.toLowerCase().includes(query) ||
+        (transaction.reference_id || "")
+          .toLowerCase()
+          .includes(query);
+
+      const matchesType =
+        typeFilter === "all" ||
+        transaction.type.toLowerCase() === typeFilter;
+
+      const matchesStatus =
+        statusFilter === "all" ||
+        transaction.status.toLowerCase() === statusFilter;
+
+      return (
+        matchesSearch &&
+        matchesType &&
+        matchesStatus
+      );
+    }
+  );
+
+  const formatUSD = (amount: number) =>
+    `$${Number(amount || 0).toFixed(2)}`;
+
+  const formatUGX = (amount: number | null) =>
+    amount === null
+      ? "—"
+      : `UGX ${Number(amount).toLocaleString()}`;
 
   return (
     <div>
@@ -3197,260 +3987,278 @@ function Transactions() {
         description="Review platform transaction records."
       />
 
-      <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+      <div className="mt-6 grid gap-3 lg:grid-cols-[1fr_auto_auto_auto]">
         <input
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) =>
+            setSearch(e.target.value)
+          }
           type="text"
-          placeholder="Search transaction reference..."
+          placeholder="Search name, email, phone, ID or reference..."
           className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-50"
         />
 
-        <button
-          type="button"
-          onClick={() => setSearch("")}
-          className="rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-bold"
+        <select
+          value={typeFilter}
+          onChange={(e) =>
+            setTypeFilter(e.target.value)
+          }
+          className="rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm font-medium outline-none focus:border-blue-500"
         >
-          Clear
-        </button>
+          <option value="all">All Types</option>
+          <option value="deposit">Deposits</option>
+          <option value="return">Returns</option>
+          <option value="referral_commission">
+            Referral Commission
+          </option>
+        </select>
+
+        <select
+          value={statusFilter}
+          onChange={(e) =>
+            setStatusFilter(e.target.value)
+          }
+          className="rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm font-medium outline-none focus:border-blue-500"
+        >
+          <option value="all">All Status</option>
+          <option value="completed">Completed</option>
+          <option value="pending">Pending</option>
+          <option value="approved">Approved</option>
+          <option value="rejected">Rejected</option>
+        </select>
+
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={() => {
+              setSearch("");
+              setTypeFilter("all");
+              setStatusFilter("all");
+            }}
+            className="rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-bold"
+          >
+            Clear
+          </button>
+
+          <button
+            type="button"
+            onClick={() =>
+              void loadTransactions()
+            }
+            className="rounded-xl bg-blue-600 px-5 py-3 text-sm font-bold text-white hover:bg-blue-700"
+          >
+            ↻ Refresh
+          </button>
+        </div>
       </div>
 
-      <div className="mt-6 rounded-2xl bg-white p-8 text-center shadow-sm ring-1 ring-slate-200">
-        <div className="text-3xl">▤</div>
+      <div className="mt-5 flex flex-wrap gap-2">
+        <span className="rounded-full bg-blue-50 px-3 py-1.5 text-xs font-bold text-blue-700">
+          {filteredTransactions.length} records
+        </span>
 
-        <h2 className="mt-3 font-extrabold">
-          Transaction Ledger
-        </h2>
+        <span className="rounded-full bg-slate-100 px-3 py-1.5 text-xs font-bold text-slate-600">
+          Total:{" "}
+          {formatUSD(
+            filteredTransactions.reduce(
+              (sum, item) =>
+                sum + Number(item.amount_usd || 0),
+              0
+            )
+          )}
+        </span>
+      </div>
 
-        <p className="mt-2 text-sm text-slate-500">
-          The transaction interface is ready for connection
-          to your exact transactions table schema.
-        </p>
-
-        {search && (
-          <p className="mt-3 break-all text-xs font-bold text-blue-600">
-            Filter: {search}
+      {error && (
+        <div className="mt-5 rounded-xl border border-red-200 bg-red-50 p-4">
+          <p className="font-bold text-red-600">
+            Unable to load transactions
           </p>
-        )}
-      </div>
+
+          <p className="mt-1 break-words text-sm text-red-500">
+            {error}
+          </p>
+        </div>
+      )}
+
+      {loading ? (
+        <div className="mt-6 rounded-2xl bg-white p-8 text-center shadow-sm ring-1 ring-slate-200">
+          <p className="text-sm text-slate-500">
+            Loading transaction ledger...
+          </p>
+        </div>
+      ) : filteredTransactions.length === 0 ? (
+        <div className="mt-6 rounded-2xl bg-white p-8 text-center shadow-sm ring-1 ring-slate-200">
+          <div className="text-3xl">▤</div>
+
+          <h2 className="mt-3 font-extrabold text-slate-800">
+            No transactions found
+          </h2>
+
+          <p className="mt-2 text-sm text-slate-500">
+            Try changing your search or filters.
+          </p>
+        </div>
+      ) : (
+        <div className="mt-6 space-y-3">
+          {filteredTransactions.map(
+            (transaction) => (
+              <div
+                key={transaction.id}
+                className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-200"
+              >
+                <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                  <div className="min-w-0">
+                    <div className="flex items-start gap-3">
+                      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-blue-50 font-extrabold text-blue-700">
+                        $
+                      </div>
+
+                      <div className="min-w-0">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <h3 className="font-extrabold text-slate-900">
+                            {transaction.type
+                              .replace(/_/g, " ")
+                              .replace(
+                                /\b\w/g,
+                                (letter) =>
+                                  letter.toUpperCase()
+                              )}
+                          </h3>
+
+                          <span
+                            className={`rounded-full px-2.5 py-1 text-[10px] font-extrabold uppercase ${
+                              transaction.status.toLowerCase() ===
+                                "completed" ||
+                              transaction.status.toLowerCase() ===
+                                "approved"
+                                ? "bg-green-50 text-green-700"
+                                : transaction.status.toLowerCase() ===
+                                  "pending"
+                                ? "bg-amber-50 text-amber-700"
+                                : "bg-red-50 text-red-700"
+                            }`}
+                          >
+                            {transaction.status}
+                          </span>
+                        </div>
+
+                        <p className="mt-1 text-xs text-slate-400">
+                          {formatDate(
+                            transaction.created_at
+                          )}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="mt-4 rounded-xl bg-blue-50 p-4">
+                      <p className="text-xs font-bold uppercase tracking-wide text-blue-600">
+                        Subscriber
+                      </p>
+
+                      <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                        <div>
+                          <p className="text-xs text-slate-400">
+                            Full name
+                          </p>
+
+                          <p className="font-bold text-slate-900">
+                            {transaction.full_name ||
+                              "—"}
+                          </p>
+                        </div>
+
+                        <div>
+                          <p className="text-xs text-slate-400">
+                            Email
+                          </p>
+
+                          <p className="break-all font-bold text-slate-900">
+                            {transaction.email ||
+                              "—"}
+                          </p>
+                        </div>
+
+                        <div>
+                          <p className="text-xs text-slate-400">
+                            Phone
+                          </p>
+
+                          <p className="font-bold text-slate-900">
+                            {transaction.phone ||
+                              "—"}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="grid gap-3 sm:grid-cols-2 lg:min-w-[280px]">
+                    <div className="rounded-xl bg-slate-50 p-4">
+                      <p className="text-xs text-slate-400">
+                        Amount USD
+                      </p>
+
+                      <p className="mt-1 text-lg font-extrabold text-slate-900">
+                        {formatUSD(
+                          transaction.amount_usd
+                        )}
+                      </p>
+                    </div>
+
+                    <div className="rounded-xl bg-slate-50 p-4">
+                      <p className="text-xs text-slate-400">
+                        Amount UGX
+                      </p>
+
+                      <p className="mt-1 text-lg font-extrabold text-slate-900">
+                        {formatUGX(
+                          transaction.amount_ugx
+                        )}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {transaction.description && (
+                  <div className="mt-4 rounded-xl bg-slate-50 p-4">
+                    <p className="text-xs text-slate-400">
+                      Description
+                    </p>
+
+                    <p className="mt-1 text-sm text-slate-700">
+                      {transaction.description}
+                    </p>
+                  </div>
+                )}
+
+                <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                  <div>
+                    <p className="text-[10px] uppercase text-slate-400">
+                      Transaction ID
+                    </p>
+
+                    <p className="mt-1 break-all font-mono text-xs text-slate-600">
+                      {transaction.id}
+                    </p>
+                  </div>
+
+                  <div>
+                    <p className="text-[10px] uppercase text-slate-400">
+                      Reference ID
+                    </p>
+
+                    <p className="mt-1 break-all font-mono text-xs text-slate-600">
+                      {transaction.reference_id ||
+                        "—"}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )
+          )}
+        </div>
+      )}
     </div>
   );
-}
-
-/* =========================================================
-   SMALL COMPONENTS
-========================================================= */
-
-function PageIntro({
-  eyebrow,
-  title,
-  description,
-}: {
-  eyebrow: string;
-  title: string;
-  description: string;
-}) {
-  return (
-    <div>
-      <p className="text-xs font-bold uppercase tracking-wider text-blue-600">
-        {eyebrow}
-      </p>
-
-      <h2 className="mt-1 text-2xl font-extrabold sm:text-3xl">
-        {title}
-      </h2>
-
-      <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-500">
-        {description}
-      </p>
-    </div>
-  );
-}
-
-function AdminStat({
-  title,
-  value,
-  icon,
-  detail,
-}: {
-  title: string;
-  value: string;
-  icon: string;
-  detail: string;
-}) {
-  return (
-    <div className="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-200 sm:p-5">
-      <div className="flex items-start justify-between gap-2">
-        <p className="text-xs font-semibold text-slate-500 sm:text-sm">
-          {title}
-        </p>
-
-        <span className="text-lg">{icon}</span>
-      </div>
-
-      <p className="mt-3 break-words text-2xl font-extrabold sm:text-3xl">
-        {value}
-      </p>
-
-      <p className="mt-1 text-[11px] text-slate-400">
-        {detail}
-      </p>
-    </div>
-  );
-}
-
-function SmallStat({
-  title,
-  value,
-}: {
-  title: string;
-  value: string;
-}) {
-  return (
-    <div className="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-200">
-      <p className="text-xs text-slate-500">{title}</p>
-
-      <p className="mt-2 text-xl font-extrabold">
-        {value}
-      </p>
-    </div>
-  );
-}
-
-function StatusBadge({
-  status,
-}: {
-  status: string | null;
-}) {
-  const normalized = (status || "").toLowerCase();
-
-  let style = "bg-slate-100 text-slate-600";
-
-  if (
-    normalized === "active" ||
-    normalized === "verified" ||
-    normalized === "completed" ||
-    normalized === "approved"
-  ) {
-    style = "bg-green-50 text-green-700";
-  }
-
-  if (normalized === "pending") {
-    style = "bg-amber-50 text-amber-700";
-  }
-
-  if (
-    normalized === "rejected" ||
-    normalized === "failed"
-  ) {
-    style = "bg-red-50 text-red-700";
-  }
-
-  return (
-    <span
-      className={`mt-2 inline-block rounded-full px-3 py-1 text-[10px] font-extrabold uppercase ${style}`}
-    >
-      {status || "unknown"}
-    </span>
-  );
-}
-
-function Rule({
-  label,
-  value,
-}: {
-  label: string;
-  value: string;
-}) {
-  return (
-    <div className="flex items-center justify-between gap-3 border-b border-slate-800 pb-3 last:border-0">
-      <span className="text-xs text-slate-400">
-        {label}
-      </span>
-
-      <span className="text-right text-xs font-bold text-white">
-        {value}
-      </span>
-    </div>
-  );
-}
-
-function InfoBox({
-  label,
-  value,
-}: {
-  label: string;
-  value: string;
-}) {
-  return (
-    <div className="rounded-xl bg-slate-50 p-3">
-      <p className="text-[10px] uppercase text-slate-400">
-        {label}
-      </p>
-
-      <p className="mt-1 break-all text-sm font-bold">
-        {value}
-      </p>
-    </div>
-  );
-}
-
-function MenuIcon({ item }: { item: string }) {
-  const icons: Record<string, string> = {
-    Overview: "▦",
-    Deposits: "↓",
-    "Deposit Settings": "⚙",
-    Withdrawals: "↑",
-    Users: "♙",
-    Packages: "◇",
-    "Daily Tasks": "✓",
-    Notices: "●",
-    Transactions: "▤",
-  };
-
-  return (
-    <span className="flex h-6 w-6 items-center justify-center text-sm">
-      {icons[item] || "•"}
-    </span>
-  );
-}
-
-
-
-function getStatusStyle(status: string | null) {
-  switch (status?.toLowerCase()) {
-    case "approved":
-    case "completed":
-      return "bg-green-50 text-green-700";
-
-    case "pending":
-      return "bg-amber-50 text-amber-700";
-
-    case "rejected":
-    case "failed":
-      return "bg-red-50 text-red-700";
-
-    default:
-      return "bg-slate-100 text-slate-600";
-  }
-}
-
-function getStatusLabel(status: string | null) {
-  if (!status) return "Pending";
-
-  return status
-    .replace(/_/g, " ")
-    .replace(/\b\w/g, (letter) => letter.toUpperCase());
-}
-
-function formatDate(
-  value: string | null | undefined
-) {
-  if (!value) return "—";
-
-  try {
-    return new Date(value).toLocaleString();
-  } catch {
-    return value;
-  }
 }
