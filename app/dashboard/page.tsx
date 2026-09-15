@@ -1647,19 +1647,19 @@ const withdrawableProfitUgx = Math.round(
         </button>
 
         {/* Pending information */}
-        <div className="mt-3 rounded-xl bg-slate-50 p-3 dark:bg-slate-800">
-          <p className="text-center text-xs leading-5 text-slate-500 dark:text-slate-400">
-            Your deposit remains pending until reviewed and approved by an
-            administrator.
-          </p>
-        </div>
+    <div className="mt-3 rounded-xl border border-blue-900/60 bg-blue-950/50 p-3">
+  <p className="text-center text-xs leading-5 text-blue-200">
+    Your deposit remains pending until reviewed and approved by an
+    administrator.
+  </p>
+</div>
       </div>
     ) : (
-      <div className="mt-5 rounded-xl border border-slate-200 bg-slate-50 p-4 text-center dark:border-slate-700 dark:bg-slate-800">
-        <p className="text-sm text-slate-500 dark:text-slate-400">
-          Select a package below to continue.
-        </p>
-      </div>
+    <div className="mt-5 rounded-xl border border-blue-900/60 bg-blue-950/50 p-4 text-center">
+  <p className="text-sm font-semibold text-blue-200">
+    Select a package below to continue.
+  </p>
+</div>
     )}
   </section>
 )}
@@ -1990,7 +1990,7 @@ const withdrawableProfitUgx = Math.round(
                   className="flex items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white p-4"
                 >
                   <div>
-                    <p className="text-sm font-extrabold">
+                    <p className="text-sm font-extrabold text-blue-700 dark:text-blue-400">
                       $
                       {Number(
                         deposit.amount_usd
