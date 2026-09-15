@@ -2041,67 +2041,70 @@ const withdrawableProfitUgx = Math.round(
             <div className="mt-3 space-y-2">
               {withdrawals.map((withdrawal) => (
                 <div
-                  key={withdrawal.id}
-                  className="rounded-xl border border-slate-200 bg-white p-4"
-                >
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <p className="text-sm font-extrabold text-slate-900">
-                        $
-                        {Number(
-                          withdrawal.requested_amount_usd
-                        ).toFixed(2)}
-                      </p>
+  key={withdrawal.id}
+  className="rounded-xl border border-slate-200 bg-white p-3"
+>
+  {/* AMOUNT + STATUS */}
+  <div className="flex items-start justify-between gap-2">
+    <div>
+      <p className="text-base font-extrabold text-slate-900">
+        $
+        {Number(
+          withdrawal.requested_amount_usd
+        ).toFixed(2)}
+      </p>
 
-                      <p className="mt-1 text-xs text-slate-400">
-                        {new Date(
-                          withdrawal.requested_at
-                        ).toLocaleString()}
-                      </p>
-                    </div>
+      <p className="mt-0.5 text-[11px] text-slate-400">
+        {new Date(
+          withdrawal.requested_at
+        ).toLocaleString()}
+      </p>
+    </div>
 
-                    <StatusBadge
-                      status={withdrawal.status}
-                    />
-                  </div>
+    <StatusBadge
+      status={withdrawal.status}
+    />
+  </div>
 
-                  <div className="mt-3 grid grid-cols-2 gap-2 border-t border-slate-100 pt-3 text-xs">
-                    <div>
-                      <p className="text-slate-400">
-                        Fee (5%)
-                      </p>
+  {/* FEE + RECEIVE */}
+  <div className="mt-2 grid grid-cols-2 gap-2 border-t border-slate-100 pt-2">
+    <div>
+      <p className="text-[11px] text-slate-400">
+        Fee (5%)
+      </p>
 
-                      <p className="mt-1 font-bold text-red-600">
-                        -$
-                        {Number(
-                          withdrawal.fee_usd
-                        ).toFixed(2)}
-                      </p>
-                    </div>
+      <p className="mt-0.5 text-sm font-bold text-red-600">
+        -$
+        {Number(
+          withdrawal.fee_usd
+        ).toFixed(2)}
+      </p>
+    </div>
 
-                    <div>
-                      <p className="text-slate-400">
-                        You receive
-                      </p>
+    <div>
+      <p className="text-[11px] text-slate-400">
+        You receive
+      </p>
 
-                      <p className="mt-1 font-extrabold text-blue-700">
-                        $
-                        {Number(
-                          withdrawal.net_amount_usd
-                        ).toFixed(2)}
-                      </p>
-                    </div>
-                  </div>
+      <p className="mt-0.5 text-sm font-extrabold text-blue-700">
+        $
+        {Number(
+          withdrawal.net_amount_usd
+        ).toFixed(2)}
+      </p>
+    </div>
+  </div>
 
-                  {withdrawal.reviewed_at && (
-                    <p className="mt-3 text-[11px] text-slate-400">
-                      Reviewed{" "}
-                      {new Date(
-                        withdrawal.reviewed_at
-                      ).toLocaleString()}
-                    </p>
-                  )}
-                </div>
+  {/* REVIEWED */}
+  {withdrawal.reviewed_at && (
+    <p className="mt-2 text-[10px] text-slate-400">
+      Reviewed{" "}
+      {new Date(
+        withdrawal.reviewed_at
+      ).toLocaleString()}
+    </p>
+  )}
+</div>
               ))}
             </div>
           </section>
