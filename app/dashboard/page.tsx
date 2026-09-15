@@ -914,36 +914,40 @@ const withdrawableProfitUgx = Math.round(
 </aside>
 
       {/* HEADER */}
-      <header className="border-b border-slate-200 bg-white">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6">
-          <div>
-<button
-  type="button"
-  onClick={() => setSidebarOpen(true)}
-  className="rounded-lg border border-slate-200 px-3 py-2 text-lg font-bold text-slate-700 hover:bg-slate-800
-   lg:hidden"
-  aria-label="Open menu"
->
-  ☰
-</button>
-        
-  <p className="text-lg font-extrabold text-slate-800">
-    Dashboard
-  </p>
-  <p className="mt-1 text-xs text-slate-900">
-    Manage your BLUESTONIE account and investments.
-  </p>
-</div>
+<header className="border-b border-slate-700 bg-slate-900">
+  <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6">
+    
+    <div className="flex items-center gap-3">
+      <button
+        type="button"
+        onClick={() => setSidebarOpen(true)}
+        className="rounded-xl border border-slate-700 bg-slate-800 px-3 py-2 text-lg font-bold text-slate-200 transition hover:border-blue-500 hover:bg-slate-700 hover:text-white lg:hidden"
+        aria-label="Open menu"
+      >
+        ☰
+      </button>
 
-          <button
-            onClick={handleLogout}
-            className="rounded-lg border border-slate-200 px-3 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50"
-          >
-            Logout
-          </button>
-        </div>
-      </header>
+      <div>
+        <p className="text-lg font-extrabold text-white">
+          Dashboard
+        </p>
 
+        <p className="mt-1 text-xs font-medium text-slate-400">
+         WELCOME TO  BLUESTONIE INVESTMENTS 
+        </p>
+      </div>
+    </div>
+
+    <button
+      type="button"
+      onClick={handleLogout}
+      className="rounded-xl border border-slate-700 bg-slate-800 px-4 py-2.5 text-sm font-bold text-slate-300 transition hover:border-red-500/50 hover:bg-red-500/10 hover:text-red-400"
+    >
+      Logout
+    </button>
+
+  </div>
+</header>
       <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6">
         {/* TOP ACCOUNT AREA */}
         <section className="rounded-3xl bg-slate-900 p-5 text-white shadow-lg sm:p-6">
@@ -1353,53 +1357,78 @@ const withdrawableProfitUgx = Math.round(
     Choose Payment Method
   </p>
 
-  <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+  {/* MOBILE DROPDOWN */}
+  <div className="mt-3 sm:hidden">
+    <select
+      value={selectedDepositMethod}
+      onChange={(e) =>
+        setSelectedDepositMethod(
+          e.target.value as
+            | "Mobile Money"
+            | "USDT / Crypto"
+            | "Merchant Pay"
+        )
+      }
+      className="w-full rounded-xl border border-blue-500 bg-white px-4 py-3 text-sm font-extrabold text-slate-900 outline-none focus:ring-2 focus:ring-blue-100 dark:border-blue-500 dark:bg-slate-900 dark:text-white"
+    >
+      <option value="Mobile Money">
+        Mobile Money — Recommended
+      </option>
+
+      <option value="USDT / Crypto">
+        USDT / Crypto
+      </option>
+
+      <option value="Merchant Pay">
+        Merchant Pay
+      </option>
+    </select>
+
+    <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
+      Mobile Money is recommended for the fastest deposit processing.
+    </p>
+  </div>
+
+  {/* DESKTOP METHOD CARDS */}
+  <div className="mt-3 hidden gap-3 sm:grid sm:grid-cols-2 lg:grid-cols-4">
 
     {/* Mobile Money */}
     <button
       type="button"
       onClick={() => setSelectedDepositMethod("Mobile Money")}
-      className={`rounded-xl border p-4 text-left transition ${
+      className={`rounded-xl border p-3 text-left transition ${
         selectedDepositMethod === "Mobile Money"
           ? "border-blue-500 bg-blue-50 ring-2 ring-blue-100 dark:border-blue-500 dark:bg-blue-950/40"
           : "border-slate-200 bg-white hover:border-blue-300 dark:border-slate-700 dark:bg-slate-900"
       }`}
     >
-      <p className="font-extrabold text-slate-900 dark:text-white">
+      <p className="text-sm font-extrabold text-slate-900 dark:text-white">
         Mobile Money
       </p>
 
-      <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-        MTN & Airtel
-      </p>
+      <div className="mt-2 flex flex-wrap items-center gap-1.5">
+        <span className="text-xs font-bold text-green-600">
+          Active
+        </span>
 
-      <div className="mt-2 flex items-center gap-2">
-  <span className="inline-block text-xs font-bold text-green-600">
-    Active
-  </span>
-
-  <span className="rounded-full bg-blue-100 px-2 py-1 text-[10px] font-extrabold uppercase tracking-wide text-blue-700 dark:bg-blue-900/50 dark:text-blue-300">
-    Recommended
-  </span>
-</div>
+        <span className="rounded-full bg-blue-100 px-2 py-1 text-[9px] font-extrabold uppercase tracking-wide text-blue-700 dark:bg-blue-900/50 dark:text-blue-300">
+          Recommended
+        </span>
+      </div>
     </button>
 
     {/* USDT */}
     <button
       type="button"
       onClick={() => setSelectedDepositMethod("USDT / Crypto")}
-      className={`rounded-xl border p-4 text-left transition ${
+      className={`rounded-xl border p-3 text-left transition ${
         selectedDepositMethod === "USDT / Crypto"
           ? "border-blue-500 bg-blue-50 ring-2 ring-blue-100 dark:border-blue-500 dark:bg-blue-950/40"
           : "border-slate-200 bg-white hover:border-blue-300 dark:border-slate-700 dark:bg-slate-900"
       }`}
     >
-      <p className="font-extrabold text-slate-900 dark:text-white">
+      <p className="text-sm font-extrabold text-slate-900 dark:text-white">
         USDT / Crypto
-      </p>
-
-      <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-        Cryptocurrency
       </p>
 
       <span className="mt-2 inline-block text-xs font-bold text-green-600">
@@ -1411,18 +1440,14 @@ const withdrawableProfitUgx = Math.round(
     <button
       type="button"
       onClick={() => setSelectedDepositMethod("Merchant Pay")}
-      className={`rounded-xl border p-4 text-left transition ${
+      className={`rounded-xl border p-3 text-left transition ${
         selectedDepositMethod === "Merchant Pay"
           ? "border-blue-500 bg-blue-50 ring-2 ring-blue-100 dark:border-blue-500 dark:bg-blue-950/40"
           : "border-slate-200 bg-white hover:border-blue-300 dark:border-slate-700 dark:bg-slate-900"
       }`}
     >
-      <p className="font-extrabold text-slate-900 dark:text-white">
+      <p className="text-sm font-extrabold text-slate-900 dark:text-white">
         Merchant Pay
-      </p>
-
-      <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-        Merchant payment
       </p>
 
       <span className="mt-2 inline-block text-xs font-bold text-green-600">
@@ -1430,26 +1455,18 @@ const withdrawableProfitUgx = Math.round(
       </span>
     </button>
 
+    {/* Bank Transfer */}
+    <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 dark:border-slate-700 dark:bg-slate-900">
+      <p className="text-sm font-extrabold text-slate-900 dark:text-white">
+        Bank Transfer
+      </p>
+
+      <span className="mt-2 inline-block text-xs font-bold text-amber-600">
+        Coming Soon
+      </span>
+    </div>
+
   </div>
-
-{/* Bank Transfer */}
-<button
-  type="button"
-  disabled
-  className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-left opacity-80 dark:border-slate-700 dark:bg-slate-900"
->
-  <p className="font-extrabold text-slate-900 dark:text-white">
-    Bank Transfer
-  </p>
-
-  <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-    Direct bank payment
-  </p>
-
-  <span className="mt-2 inline-block text-xs font-bold text-amber-600">
-    Coming Soon
-  </span>
-</button>
 
 </div>
 
