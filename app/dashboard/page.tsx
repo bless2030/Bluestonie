@@ -105,6 +105,9 @@ const [referrals, setReferrals] = useState<Referral[]>([]);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
+  const [selectedDepositMethod, setSelectedDepositMethod] =
+  useState<"Mobile Money" | "USDT / Crypto" | "Merchant Pay">("Mobile Money");
+
   useEffect(() => {
     loadDashboard();
   }, []);
@@ -709,7 +712,7 @@ const withdrawableProfitUgx = Math.round(
   }
 
   return (
-    <main className="min-h-screen bg-slate-50 lg:pl-72">
+    <main className="min-h-screen bg-slate-200 lg:pl-72">
 
 {/* MOBILE SIDEBAR OVERLAY */}
 {sidebarOpen && (
@@ -1208,195 +1211,8 @@ const withdrawableProfitUgx = Math.round(
           </section>
         )}
 
-        {/* DEPOSIT PANEL */}
-        {showDeposit && (
-          <section
-            ref={depositPanelRef}
-            className="mt-5 rounded-2xl border border-blue-200 bg-white p-5 shadow-sm"
-          >
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <p className="text-xs font-bold uppercase tracking-wide text-blue-600">
-                  Deposit
-                </p>
 
-                <h2 className="mt-1 text-xl font-extrabold text-slate-900">
-                  Fund your account
-                </h2>
-
-                <p className="mt-1 text-sm text-slate-500">
-                  Submit your payment reference for
-                  administrator verification.
-                </p>
-              </div>
-
-              <button
-                onClick={() =>
-                  setShowDeposit(false)
-                }
-                className="text-sm font-bold text-slate-400 hover:text-slate-700"
-              >
-                Close
-              </button>
-            </div>
-
-            {selectedPackage ? (
-              <div className="mt-5">
-                <div className="rounded-xl bg-blue-50 p-4">
-                  <p className="text-xs font-bold text-blue-600">
-                    Selected Package
-                  </p>
-
-                  <div className="mt-1 flex items-center justify-between gap-3">
-                    <p className="font-extrabold text-slate-900">
-                      {selectedPackage.name}
-                    </p>
-
-                    <p className="font-extrabold text-blue-700">
-                      $
-                      {Number(
-                        selectedPackage.min_usd
-                      ).toFixed(0)}{" "}
-                      - $
-                      {Number(
-                        selectedPackage.max_usd
-                      ).toFixed(0)}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="mt-5 rounded-2xl border border-blue-100 bg-blue-50 p-4">
-  <p className="text-sm font-extrabold text-blue-900">
-    Payment Instructions
-  </p>
-
-  <p className="mt-1 text-xs leading-5 text-blue-700">
-    Send your deposit using the payment details below.
-  </p>
-
-  <div className="mt-4 space-y-3">
-    <div className="rounded-xl bg-white p-3">
-      <p className="text-xs font-semibold text-slate-400">
-        Payment Method
-      </p>
-      <p className="mt-1 font-extrabold text-slate-900">
-        {depositMethod || "NOT LOADED"}
-      </p>
-    </div>
-
-    <div className="rounded-xl bg-white p-3">
-  <p className="text-xs font-semibold text-slate-400">
-    Send Payment To
-  </p>
-
-  <div className="mt-1 flex items-center justify-between gap-3">
-    <p className="text-lg font-extrabold text-blue-700">
-      {depositNumber || "NOT LOADED"}
-    </p>
-
-    {depositNumber && (
-      <button
-        type="button"
-        onClick={async () => {
-          await navigator.clipboard.writeText(depositNumber);
-          alert("Deposit number copied!");
-        }}
-        className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-800"
-      >
-        Copy
-      </button>
-    )}
-  </div>
-
-  </div>
-
-    <div className="rounded-xl bg-white p-3">
-      <p className="text-xs font-semibold text-slate-400">
-        Account Name
-      </p>
-      <p className="mt-1 font-extrabold text-slate-900">
-        {depositAccountName || "NOT LOADED"}
-      </p>
-    </div>
-  </div>
-</div>
-                <div className="mt-4 grid gap-4 sm:grid-cols-2">
-                  <div>
-                    <label className="text-sm font-bold text-slate-700">
-                      Deposit Amount (USD)
-                    </label>
-
-                    <input
-                      type="number"
-                      min={Number(
-                        selectedPackage.min_usd
-                      )}
-                      max={Number(
-                        selectedPackage.max_usd
-                      )}
-                      value={depositUsd}
-                      onChange={(e) =>
-                        setDepositUsd(
-                          e.target.value
-                        )
-                      }
-                      placeholder="Enter amount"
-                      className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-base text-slate-900 outline-none placeholder:text-slate-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
-                    />
-                    {depositUsd && Number(depositUsd) > 0 && (
-  <p className="mt-2 text-sm font-semibold text-slate-600 dark:text-slate-300">
-    Amount to send: UGX{" "}
-    {(Number(depositUsd) * 4000).toLocaleString()}
-  </p>
-)}
-                  </div>
-
-                  <div>
-                    <label className="text-sm font-bold text-slate-700">
-                      Payment Reference
-                    </label>
-
-                    <input
-                      type="text"
-                      value={depositReference}
-                      onChange={(e) =>
-                        setDepositReference(
-                          e.target.value
-                        )
-                      }
-                      
-                      placeholder="e.g. transaction number"
-                      className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-base text-slate-900 outline-none placeholder:text-slate-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
-                    />
-                    
-                  </div>
-                </div>
-
-                <button
-                  onClick={handleDeposit}
-                  disabled={submittingDeposit}
-                  className="mt-5 w-full rounded-xl bg-blue-600 px-5 py-3.5 text-sm font-extrabold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
-                >
-                  {submittingDeposit
-                    ? "Submitting..."
-                    : "Submit Deposit Request"}
-                </button>
-
-                <p className="mt-3 text-center text-xs text-slate-400">
-                  Your deposit remains pending until
-                  reviewed and approved by an
-                  administrator.
-                </p>
-              </div>
-            ) : (
-              <p className="mt-5 rounded-xl bg-slate-50 p-4 text-center text-sm text-slate-500">
-                Select a package below to continue.
-              </p>
-            )}
-          </section>
-        )}
-
- {/* PACKAGES */}
+      {/* PACKAGES */}
         <section
           ref={packageSectionRef}
           className="mt-7 scroll-mt-6"
@@ -1474,7 +1290,364 @@ const withdrawableProfitUgx = Math.round(
               );
             })}
           </div>
-        </section>
+        </section>  
+
+        
+{/* DEPOSIT PANEL */}
+{showDeposit && (
+  <section
+    ref={depositPanelRef}
+    className="mt-5 rounded-2xl border border-blue-200 bg-white p-5 shadow-sm transition-colors dark:border-slate-800 dark:bg-slate-900 sm:p-6"
+  >
+    {/* Header */}
+    <div className="flex items-start justify-between gap-4">
+      <div>
+        <p className="text-xs font-bold uppercase tracking-wide text-blue-600 dark:text-blue-400">
+          Deposit
+        </p>
+
+        <h2 className="mt-1 text-xl font-extrabold text-slate-900 dark:text-white">
+          Fund your account
+        </h2>
+
+        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+          Submit your payment reference for administrator verification.
+        </p>
+      </div>
+
+      <button
+        type="button"
+        onClick={() => setShowDeposit(false)}
+        className="text-sm font-bold text-slate-400 transition hover:text-slate-700 dark:hover:text-slate-200"
+      >
+        Close
+      </button>
+    </div>
+
+    {selectedPackage ? (
+      <div className="mt-5">
+        {/* SELECTED PACKAGE */}
+        <div className="rounded-xl border border-blue-100 bg-blue-50 p-4 dark:border-blue-900/60 dark:bg-slate-800">
+          <p className="text-xs font-bold uppercase tracking-wide text-blue-600 dark:text-blue-400">
+            Selected Package
+          </p>
+
+          <div className="mt-2 flex items-center justify-between gap-3">
+            <p className="font-extrabold text-slate-900 dark:text-white">
+              {selectedPackage.name}
+            </p>
+
+            <p className="font-extrabold text-blue-700 dark:text-blue-400">
+              $
+              {Number(selectedPackage.min_usd).toFixed(0)}
+              {" - "}
+              $
+              {Number(selectedPackage.max_usd).toFixed(0)}
+            </p>
+          </div>
+        </div>
+
+       {/* PAYMENT METHOD */}
+<div className="mt-5">
+  <p className="text-sm font-extrabold text-slate-900 dark:text-white">
+    Choose Payment Method
+  </p>
+
+  <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+
+    {/* Mobile Money */}
+    <button
+      type="button"
+      onClick={() => setSelectedDepositMethod("Mobile Money")}
+      className={`rounded-xl border p-4 text-left transition ${
+        selectedDepositMethod === "Mobile Money"
+          ? "border-blue-500 bg-blue-50 ring-2 ring-blue-100 dark:border-blue-500 dark:bg-blue-950/40"
+          : "border-slate-200 bg-white hover:border-blue-300 dark:border-slate-700 dark:bg-slate-900"
+      }`}
+    >
+      <p className="font-extrabold text-slate-900 dark:text-white">
+        Mobile Money
+      </p>
+
+      <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+        MTN & Airtel
+      </p>
+
+      <div className="mt-2 flex items-center gap-2">
+  <span className="inline-block text-xs font-bold text-green-600">
+    Active
+  </span>
+
+  <span className="rounded-full bg-blue-100 px-2 py-1 text-[10px] font-extrabold uppercase tracking-wide text-blue-700 dark:bg-blue-900/50 dark:text-blue-300">
+    Recommended
+  </span>
+</div>
+    </button>
+
+    {/* USDT */}
+    <button
+      type="button"
+      onClick={() => setSelectedDepositMethod("USDT / Crypto")}
+      className={`rounded-xl border p-4 text-left transition ${
+        selectedDepositMethod === "USDT / Crypto"
+          ? "border-blue-500 bg-blue-50 ring-2 ring-blue-100 dark:border-blue-500 dark:bg-blue-950/40"
+          : "border-slate-200 bg-white hover:border-blue-300 dark:border-slate-700 dark:bg-slate-900"
+      }`}
+    >
+      <p className="font-extrabold text-slate-900 dark:text-white">
+        USDT / Crypto
+      </p>
+
+      <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+        Cryptocurrency
+      </p>
+
+      <span className="mt-2 inline-block text-xs font-bold text-green-600">
+        Active
+      </span>
+    </button>
+
+    {/* Merchant Pay */}
+    <button
+      type="button"
+      onClick={() => setSelectedDepositMethod("Merchant Pay")}
+      className={`rounded-xl border p-4 text-left transition ${
+        selectedDepositMethod === "Merchant Pay"
+          ? "border-blue-500 bg-blue-50 ring-2 ring-blue-100 dark:border-blue-500 dark:bg-blue-950/40"
+          : "border-slate-200 bg-white hover:border-blue-300 dark:border-slate-700 dark:bg-slate-900"
+      }`}
+    >
+      <p className="font-extrabold text-slate-900 dark:text-white">
+        Merchant Pay
+      </p>
+
+      <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+        Merchant payment
+      </p>
+
+      <span className="mt-2 inline-block text-xs font-bold text-green-600">
+        Active
+      </span>
+    </button>
+
+  </div>
+
+{/* Bank Transfer */}
+<button
+  type="button"
+  disabled
+  className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-left opacity-80 dark:border-slate-700 dark:bg-slate-900"
+>
+  <p className="font-extrabold text-slate-900 dark:text-white">
+    Bank Transfer
+  </p>
+
+  <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+    Direct bank payment
+  </p>
+
+  <span className="mt-2 inline-block text-xs font-bold text-amber-600">
+    Coming Soon
+  </span>
+</button>
+
+</div>
+
+{/* PAYMENT INSTRUCTIONS */}
+<div className="mt-5 rounded-2xl border border-blue-100 bg-blue-50 p-4 dark:border-blue-900/60 dark:bg-slate-800">
+
+  <p className="text-sm font-extrabold text-blue-900 dark:text-blue-200">
+    Payment Instructions
+  </p>
+
+  <p className="mt-1 text-xs leading-5 text-blue-700 dark:text-slate-300">
+    Send your deposit using the payment details below.
+  </p>
+
+  {/* MOBILE MONEY */}
+  {selectedDepositMethod === "Mobile Money" && (
+    <div className="mt-4 space-y-3">
+
+      <div className="rounded-xl bg-white p-3 ring-1 ring-blue-100 dark:bg-slate-900 dark:ring-slate-700">
+        <p className="text-xs font-semibold text-slate-400">
+          Payment Method
+        </p>
+
+        <p className="mt-1 font-extrabold text-slate-900 dark:text-white">
+          {depositMethod || "Mobile Money"}
+        </p>
+      </div>
+
+      <div className="rounded-xl border border-green-200 bg-green-50 p-3 dark:border-green-900/60 dark:bg-green-950/30">
+  <p className="text-xs font-bold text-green-700 dark:text-green-300">
+    Deposit time: Instant
+  </p>
+  <p className="mt-1 text-xs leading-5 text-green-600 dark:text-green-400">
+    Credited instantly after payment
+    verification.
+  </p>
+</div>
+
+      <div className="rounded-xl bg-white p-3 ring-1 ring-blue-100 dark:bg-slate-900 dark:ring-slate-700">
+        <p className="text-xs font-semibold text-slate-400">
+          Send Payment To
+        </p>
+
+        <div className="mt-1 flex items-center justify-between gap-3">
+          <p className="break-all text-lg font-extrabold text-blue-700 dark:text-blue-400">
+            {depositNumber || "NOT LOADED"}
+          </p>
+
+          {depositNumber && (
+            <button
+              type="button"
+              onClick={async () => {
+                await navigator.clipboard.writeText(depositNumber);
+                alert("Deposit number copied!");
+              }}
+              className="shrink-0 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
+            >
+              Copy
+            </button>
+          )}
+        </div>
+      </div>
+
+      <div className="rounded-xl bg-white p-3 ring-1 ring-blue-100 dark:bg-slate-900 dark:ring-slate-700">
+        <p className="text-xs font-semibold text-slate-400">
+          Account Name
+        </p>
+        
+        <p className="mt-1 font-extrabold text-slate-900 dark:text-white">
+          {depositAccountName || "NOT LOADED"}
+        </p>
+
+
+        
+      </div>
+
+    </div>
+  )}
+
+  {/* USDT */}
+  {selectedDepositMethod === "USDT / Crypto" && (
+    <div className="mt-4 rounded-xl bg-white p-4 ring-1 ring-blue-100 dark:bg-slate-900 dark:ring-slate-700">
+      <p className="font-extrabold text-slate-900 dark:text-white">
+        USDT Payment
+      </p>
+
+      <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
+        Cryptocurrency payment details will appear here once configured.
+      </p>
+    </div>
+    
+  )}
+
+  {/* MERCHANT PAY */}
+  {selectedDepositMethod === "Merchant Pay" && (
+    <div className="mt-4 rounded-xl bg-white p-4 ring-1 ring-blue-100 dark:bg-slate-900 dark:ring-slate-700">
+      <p className="font-extrabold text-slate-900 dark:text-white">
+        Merchant Pay
+      </p>
+
+      <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
+        Merchant payment details will appear here once configured.
+      </p>
+    </div>
+  )}
+
+</div>
+
+        {/* DEPOSIT FORM */}
+        <div className="mt-5 grid gap-4 sm:grid-cols-2">
+          {/* Deposit Amount */}
+          <div>
+            <label
+              htmlFor="depositUsd"
+              className="text-sm font-bold text-slate-700 dark:text-slate-200"
+            >
+              Deposit Amount (USD)
+            </label>
+
+            <input
+              id="depositUsd"
+              type="number"
+              min={Number(selectedPackage.min_usd)}
+              max={Number(selectedPackage.max_usd)}
+              value={depositUsd}
+              onChange={(e) => setDepositUsd(e.target.value)}
+              placeholder="Enter amount"
+              className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-base text-slate-900 outline-none placeholder:text-slate-400 transition focus:border-blue-600 focus:ring-2 focus:ring-blue-100 dark:border-slate-700 dark:bg-slate-800 dark:text-white dark:placeholder:text-slate-500 dark:focus:border-blue-500 dark:focus:ring-blue-500/20"
+            />
+
+            {depositUsd && Number(depositUsd) > 0 && (
+              <div className="mt-2 rounded-xl bg-slate-50 px-3 py-2 dark:bg-slate-800">
+                <p className="text-sm font-semibold text-slate-600 dark:text-slate-300">
+                  Amount to send:{" "}
+                  <span className="font-extrabold text-blue-700 dark:text-blue-400">
+                    UGX{" "}
+                    {(Number(depositUsd) * 4000).toLocaleString()}
+                  </span>
+                </p>
+              </div>
+            )}
+          </div>
+
+          {/* Payment Reference */}
+          <div>
+            <label
+              htmlFor="depositReference"
+              className="text-sm font-bold text-slate-700 dark:text-slate-200"
+            >
+              Payment Reference
+            </label>
+
+            <input
+              id="depositReference"
+              type="text"
+              value={depositReference}
+              onChange={(e) => setDepositReference(e.target.value)}
+              placeholder="e.g. transaction number"
+              className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-base text-slate-900 outline-none placeholder:text-slate-400 transition focus:border-blue-600 focus:ring-2 focus:ring-blue-100 dark:border-slate-700 dark:bg-slate-800 dark:text-white dark:placeholder:text-slate-500 dark:focus:border-blue-500 dark:focus:ring-blue-500/20"
+            />
+
+            <p className="mt-2 text-xs text-slate-400 dark:text-slate-500">
+              Enter the transaction/reference number from your payment.
+            </p>
+          </div>
+        </div>
+
+        {/* SUBMIT */}
+        <button
+          type="button"
+          onClick={handleDeposit}
+          disabled={submittingDeposit}
+          className="mt-5 w-full rounded-xl bg-blue-600 px-5 py-3.5 text-sm font-extrabold text-white shadow-sm transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          {submittingDeposit
+            ? "Submitting..."
+            : "Submit Deposit Request"}
+        </button>
+
+        {/* Pending information */}
+        <div className="mt-3 rounded-xl bg-slate-50 p-3 dark:bg-slate-800">
+          <p className="text-center text-xs leading-5 text-slate-500 dark:text-slate-400">
+            Your deposit remains pending until reviewed and approved by an
+            administrator.
+          </p>
+        </div>
+      </div>
+    ) : (
+      <div className="mt-5 rounded-xl border border-slate-200 bg-slate-50 p-4 text-center dark:border-slate-700 dark:bg-slate-800">
+        <p className="text-sm text-slate-500 dark:text-slate-400">
+          Select a package below to continue.
+        </p>
+      </div>
+    )}
+  </section>
+)}
+
+ 
 
         {/* NOTICES */}
         {notices.length > 0 && (
@@ -1788,7 +1961,7 @@ const withdrawableProfitUgx = Math.round(
                 </p>
               </div>
 
-              <div className="text-sm font-extrabold text-blue-900">
+              <div className="text-sm font-extrabold text-blue-700">
                 ${totalDeposits.toFixed(2)} total
               </div>
             </div>

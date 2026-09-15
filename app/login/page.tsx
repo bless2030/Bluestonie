@@ -122,7 +122,7 @@ export default function LoginPage() {
         <div className="mb-6 text-center">
           <Link
             href="/"
-            className="text-2xl font-extrabold tracking-tight text-blue-700"
+            className="text-2xl font-extrabold tracking-tight text-blue-900"
           >
             BLUESTONIE
           </Link>

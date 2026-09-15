@@ -1090,89 +1090,6 @@ const totalReferralCommissionUgx = referrals.reduce(
   />
 )}
 
-{activeSection === "Deposit Settings" && (
-  <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
-    <div className="mb-6">
-      <p className="text-xs font-bold uppercase tracking-wide text-blue-600">
-        Payment Configuration
-      </p>
-
-      <h2 className="mt-1 text-xl font-extrabold text-slate-900">
-        Deposit Settings
-      </h2>
-
-      <p className="mt-1 text-sm text-slate-500">
-        Change the payment details displayed to users when
-        they make a deposit.
-      </p>
-    </div>
-
-    <div className="grid gap-5">
-      {/* Deposit Method */}
-      <div>
-        <label className="text-sm font-bold text-slate-700">
-          Deposit Method
-        </label>
-
-        <input
-          type="text"
-          value={depositMethod}
-          onChange={(e) =>
-            setDepositMethod(e.target.value)
-          }
-          placeholder="e.g. Mobile Money"
-          className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-blue-500"
-        />
-      </div>
-
-      {/* Deposit Number */}
-      <div>
-        <label className="text-sm font-bold text-slate-700">
-          Deposit Number
-        </label>
-
-        <input
-          type="text"
-          value={depositNumber}
-          onChange={(e) =>
-            setDepositNumber(e.target.value)
-          }
-          placeholder="e.g. 077XXXXXXX"
-          className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-blue-500"
-        />
-      </div>
-
-      {/* Account Name */}
-      <div>
-        <label className="text-sm font-bold text-slate-700">
-          Account Name
-        </label>
-
-        <input
-          type="text"
-          value={depositAccountName}
-          onChange={(e) =>
-            setDepositAccountName(e.target.value)
-          }
-          placeholder="e.g. John Doe"
-          className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-blue-500"
-        />
-      </div>
-
-      {/* Save */}
-      <button
-        type="button"
-        onClick={() => void saveDepositSettings()}
-        disabled={savingDepositSettings}
-        className="w-full rounded-xl bg-blue-600 px-5 py-3.5 text-sm font-extrabold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60 sm:w-fit"
-      >
-        {savingDepositSettings
-          ? "Saving..."
-          : "Save Deposit Settings"}
-      </button>
-    </div>
-  </section>
-)}
 
           {activeSection === "Withdrawals" && <Withdrawals />}
 
@@ -1214,86 +1131,363 @@ function DepositSettings({
   saving: boolean;
   onSave: () => void;
 }) {
+  const [selectedMethod, setSelectedMethod] = useState<
+    "Mobile Money" | "USDT / Crypto" | "Merchant Pay" | "Bank Transfer"
+  >("Mobile Money");
+
   return (
     <div>
       <PageIntro
         eyebrow="Settings"
         title="Deposit Settings"
-        description="Manage the payment details displayed to users when they make a deposit."
+        description="Manage the payment methods displayed to users when they make a deposit."
       />
 
-      <div className="mt-6 max-w-2xl rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-200 sm:p-6">
-        <div className="space-y-5">
+      <div className="mt-6 max-w-3xl rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-200 sm:p-6">
+        <div className="space-y-6">
 
-          {/* Deposit Method */}
+          {/* PAYMENT METHODS */}
           <div>
             <label className="text-sm font-bold text-slate-700">
-              Deposit Method
+              Deposit Methods
             </label>
 
-            <input
-              type="text"
-              value={depositMethod}
-              onChange={(e) =>
-                setDepositMethod(e.target.value)
-              }
-              placeholder="e.g. Mobile Money"
-              className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-blue-500"
-            />
+            <div className="mt-3 grid gap-3 sm:grid-cols-2">
+              <button
+                type="button"
+                onClick={() => setSelectedMethod("Mobile Money")}
+                className={`rounded-xl border p-4 text-left transition ${
+                  selectedMethod === "Mobile Money"
+                    ? "border-blue-500 bg-blue-50 ring-2 ring-blue-100"
+                    : "border-slate-200 bg-white hover:border-blue-300"
+                }`}
+              >
+                <p className="font-extrabold text-slate-900">
+                  Mobile Money
+                </p>
+                <p className="mt-1 text-xs text-slate-500">
+                  MTN & Airtel Mobile Money
+                </p>
+                <span className="mt-2 inline-block text-xs font-bold text-green-600">
+                  Active
+                </span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setSelectedMethod("USDT / Crypto")}
+                className={`rounded-xl border p-4 text-left transition ${
+                  selectedMethod === "USDT / Crypto"
+                    ? "border-blue-500 bg-blue-50 ring-2 ring-blue-100"
+                    : "border-slate-200 bg-white hover:border-blue-300"
+                }`}
+              >
+                <p className="font-extrabold text-slate-900">
+                  USDT / Crypto
+                </p>
+                <p className="mt-1 text-xs text-slate-500">
+                  Cryptocurrency payment
+                </p>
+                <span className="mt-2 inline-block text-xs font-bold text-green-600">
+                  Active
+                </span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setSelectedMethod("Merchant Pay")}
+                className={`rounded-xl border p-4 text-left transition ${
+                  selectedMethod === "Merchant Pay"
+                    ? "border-blue-500 bg-blue-50 ring-2 ring-blue-100"
+                    : "border-slate-200 bg-white hover:border-blue-300"
+                }`}
+              >
+                <p className="font-extrabold text-slate-900">
+                  Merchant Pay
+                </p>
+                <p className="mt-1 text-xs text-slate-500">
+                  Merchant payment option
+                </p>
+                <span className="mt-2 inline-block text-xs font-bold text-green-600">
+                  Active
+                </span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setSelectedMethod("Bank Transfer")}
+                className={`rounded-xl border p-4 text-left transition ${
+                  selectedMethod === "Bank Transfer"
+                    ? "border-slate-300 bg-slate-50"
+                    : "border-slate-200 bg-white"
+                }`}
+              >
+                <p className="font-extrabold text-slate-900">
+                  Bank Transfer
+                </p>
+                <p className="mt-1 text-xs text-slate-500">
+                  Direct bank payment
+                </p>
+                <span className="mt-2 inline-block text-xs font-bold text-amber-600">
+                  Coming Soon
+                </span>
+              </button>
+            </div>
           </div>
 
-          {/* Deposit Number */}
-          <div>
-            <label className="text-sm font-bold text-slate-700">
-              Deposit Number
-            </label>
+          {/* MOBILE MONEY SETTINGS */}
+          {selectedMethod === "Mobile Money" && (
+            <div className="border-t border-slate-200 pt-6">
+              <div className="mb-5">
+                <h3 className="text-base font-extrabold text-slate-900">
+                  Mobile Money Settings
+                </h3>
+                <p className="mt-1 text-sm text-slate-500">
+                  These details are shown to users when Mobile Money is selected.
+                </p>
+              </div>
 
-            <input
-              type="text"
-              value={depositNumber}
-              onChange={(e) =>
-                setDepositNumber(e.target.value)
-              }
-              placeholder="e.g. 077XXXXXXX"
-              className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-blue-500"
-            />
-          </div>
+              <div className="space-y-5">
 
-          {/* Account Name */}
-          <div>
-            <label className="text-sm font-bold text-slate-700">
-              Account Name
-            </label>
+                <div>
+                  <label className="text-sm font-bold text-slate-700">
+                    Deposit Method
+                  </label>
+                  <input
+                    type="text"
+                    value={depositMethod}
+                    onChange={(e) => setDepositMethod(e.target.value)}
+                    placeholder="Mobile Money"
+                    className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-blue-500"
+                  />
+                </div>
 
-            <input
-              type="text"
-              value={depositAccountName}
-              onChange={(e) =>
-                setDepositAccountName(e.target.value)
-              }
-              placeholder="e.g. John Doe"
-              className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-blue-500"
-            />
-          </div>
+                <div>
+                  <label className="text-sm font-bold text-slate-700">
+                    Deposit Number
+                  </label>
+                  <input
+                    type="text"
+                    value={depositNumber}
+                    onChange={(e) => setDepositNumber(e.target.value)}
+                    placeholder="e.g. 077XXXXXXX"
+                    className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-blue-500"
+                  />
+                </div>
 
-          {/* Save */}
-          <button
-            type="button"
-            onClick={onSave}
-            disabled={saving}
-            className="w-full rounded-xl bg-blue-600 px-5 py-3.5 text-sm font-extrabold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
-          >
-            {saving
-              ? "Saving..."
-              : "Save Deposit Settings"}
-          </button>
+                <div>
+                  <label className="text-sm font-bold text-slate-700">
+                    Account Name
+                  </label>
+                  <input
+                    type="text"
+                    value={depositAccountName}
+                    onChange={(e) => setDepositAccountName(e.target.value)}
+                    placeholder="e.g. John Doe"
+                    className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-blue-500"
+                  />
+                </div>
+
+                <button
+                  type="button"
+                  onClick={onSave}
+                  disabled={saving}
+                  className="w-full rounded-xl bg-blue-600 px-5 py-3.5 text-sm font-extrabold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+                >
+                  {saving ? "Saving..." : "Save Mobile Money Settings"}
+                </button>
+
+              </div>
+            </div>
+          )}
+
+          {selectedMethod === "USDT / Crypto" && (
+  <div className="border-t border-slate-200 pt-6">
+    <div className="mb-5">
+      <h3 className="text-base font-extrabold text-slate-900">
+        USDT / Crypto Settings
+      </h3>
+      <p className="mt-1 text-sm text-slate-500">
+        Configure the cryptocurrency payment details displayed to users.
+      </p>
+    </div>
+
+    <div className="space-y-5">
+      <div>
+        <label className="text-sm font-bold text-slate-700">
+          Network
+        </label>
+
+        <select
+          className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-blue-500"
+          defaultValue="TRC20"
+        >
+          <option value="TRC20">USDT — TRC20</option>
+          <option value="BEP20">USDT — BEP20</option>
+          <option value="ERC20">USDT — ERC20</option>
+        </select>
+      </div>
+
+      <div>
+        <label className="text-sm font-bold text-slate-700">
+          Wallet Address
+        </label>
+
+        <input
+          type="text"
+          placeholder="Enter USDT wallet address"
+          className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-blue-500"
+        />
+      </div>
+
+      <div>
+        <label className="text-sm font-bold text-slate-700">
+          Wallet Name / Label
+        </label>
+
+        <input
+          type="text"
+          placeholder="e.g. Bluestonie USDT Wallet"
+          className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-blue-500"
+        />
+      </div>
+
+      <div>
+        <label className="text-sm font-bold text-slate-700">
+          Payment Instructions
+        </label>
+
+        <textarea
+          rows={4}
+          placeholder="Enter instructions users should follow when paying with USDT..."
+          className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-blue-500"
+        />
+      </div>
+
+      <button
+        type="button"
+        disabled
+        className="w-full rounded-xl bg-slate-300 px-5 py-3.5 text-sm font-extrabold text-slate-600 sm:w-auto"
+      >
+        Save Crypto Settings
+      </button>
+
+      <p className="text-xs text-amber-600">
+        Saving will be connected when the payment-method backend is added.
+      </p>
+    </div>
+  </div>
+)}
+
+          {selectedMethod === "Merchant Pay" && (
+  <div className="border-t border-slate-200 pt-6">
+    <div className="mb-5">
+      <h3 className="text-base font-extrabold text-slate-900">
+        Merchant Pay Settings
+      </h3>
+      <p className="mt-1 text-sm text-slate-500">
+        Configure the merchant payment details displayed to users.
+      </p>
+    </div>
+
+    <div className="space-y-5">
+      <div>
+        <label className="text-sm font-bold text-slate-700">
+          Merchant Name
+        </label>
+
+        <input
+          type="text"
+          placeholder="e.g. Bluestonie Investments"
+          className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-blue-500"
+        />
+      </div>
+
+      <div>
+        <label className="text-sm font-bold text-slate-700">
+          Merchant Number / ID
+        </label>
+
+        <input
+          type="text"
+          placeholder="Enter merchant number or ID"
+          className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-blue-500"
+        />
+      </div>
+
+      <div>
+        <label className="text-sm font-bold text-slate-700">
+          Account Name
+        </label>
+
+        <input
+          type="text"
+          placeholder="Enter merchant account name"
+          className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-blue-500"
+        />
+      </div>
+
+      <div>
+        <label className="text-sm font-bold text-slate-700">
+          Payment Instructions
+        </label>
+
+        <textarea
+          rows={4}
+          placeholder="Enter instructions users should follow when making a Merchant Pay payment..."
+          className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-blue-500"
+        />
+      </div>
+
+      <button
+        type="button"
+        disabled
+        className="w-full rounded-xl bg-slate-300 px-5 py-3.5 text-sm font-extrabold text-slate-600 sm:w-auto"
+      >
+        Save Merchant Pay Settings
+      </button>
+
+      <p className="text-xs text-amber-600">
+        Saving will be connected when the payment-method backend is added.
+      </p>
+    </div>
+  </div>
+)}
+          {selectedMethod === "Bank Transfer" && (
+  <div className="border-t border-slate-200 pt-6">
+    <div className="mb-5">
+      <h3 className="text-base font-extrabold text-slate-900">
+        Bank Transfer
+      </h3>
+      <p className="mt-1 text-sm text-slate-500">
+        Bank transfer deposits will be available in a future update.
+      </p>
+    </div>
+
+    <div className="rounded-2xl border border-amber-200 bg-amber-50 p-5">
+      <div className="flex items-center justify-between gap-4">
+        <div>
+          <p className="font-extrabold text-slate-900">
+            Bank Transfer
+          </p>
+          <p className="mt-1 text-sm text-slate-600">
+            This payment method is currently being prepared.
+          </p>
+        </div>
+
+        <span className="shrink-0 rounded-full bg-amber-100 px-3 py-1.5 text-xs font-extrabold text-amber-700">
+          Coming Soon
+        </span>
+      </div>
+    </div>
+  </div>
+)}
 
         </div>
       </div>
     </div>
   );
 }
-
 /* =========================================================
    OVERVIEW
 ========================================================= */
