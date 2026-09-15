@@ -1053,12 +1053,6 @@ const withdrawableProfitUgx = Math.round(
           </div>
         )}
 
-        {error && (
-          <div className="mt-4 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm font-medium text-red-700">
-            {error}
-          </div>
-        )}
-
         {/* WITHDRAW PANEL */}
         {showWithdraw && (
           <section className="mt-5 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
@@ -1646,13 +1640,13 @@ const withdrawableProfitUgx = Math.round(
             : "Submit Deposit Request"}
         </button>
 
-        {/* Pending information */}
-    <div className="mt-3 rounded-xl border border-blue-900/60 bg-blue-950/50 p-3">
-  <p className="text-center text-xs leading-5 text-blue-200">
-    Your deposit remains pending until reviewed and approved by an
-    administrator.
-  </p>
-</div>
+        {error && (
+          <div className="mt-4 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm font-medium text-red-700">
+            {error}
+          </div>
+        )}
+
+
       </div>
     ) : (
     <div className="mt-5 rounded-xl border border-blue-900/60 bg-blue-950/50 p-4 text-center">
