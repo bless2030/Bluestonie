@@ -934,7 +934,7 @@ const withdrawableProfitUgx = Math.round(
         </p>
 
         <p className="mt-1 text-xs font-medium text-slate-400">
-         WELCOME TO  BLUESTONIE INVESTMENTS 
+         Welcome To Bluestonie Investments
         </p>
       </div>
     </div>
@@ -1038,9 +1038,7 @@ const withdrawableProfitUgx = Math.round(
 
                 <p className="mt-1 text-xs leading-5 text-amber-700">
                   ${pendingWithdrawals.toFixed(2)} is
-                  currently reserved for pending
-                  withdrawal request(s) and cannot be
-                  reused.
+                  Withdrawal request(s) submitted successfully.
                 </p>
               </div>
             </div>
@@ -1179,7 +1177,7 @@ const withdrawableProfitUgx = Math.round(
                     e.target.value
                   )
                 }
-                placeholder="e.g. Mobile Money number and account name"
+                placeholder="e.g. Method, Account Name and Number to recieve cash"
                 rows={3}
                 className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-base text-slate-900 outline-none placeholder:text-slate-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
               />
@@ -1310,7 +1308,7 @@ const withdrawableProfitUgx = Math.round(
         </h2>
 
         <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-          Submit your payment reference for administrator verification.
+          Submit your payment reference for verification.
         </p>
       </div>
 

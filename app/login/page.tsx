@@ -41,12 +41,12 @@ export default function LoginPage() {
         password: loginPassword,
       });
 
-    if (loginError) {
-      console.error("LOGIN ERROR:", loginError);
-      setError(loginError.message);
-      setLoading(false);
-      return;
-    }
+  if (loginError) {
+  console.error("LOGIN ERROR:", loginError);
+  setError("Invalid login credentials");
+  setLoading(false);
+  return;
+}
 
     const {
       data: { user },
