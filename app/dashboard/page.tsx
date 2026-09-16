@@ -665,8 +665,9 @@ const pendingWithdrawals = withdrawals
     0
   );
 
-const withdrawableProfit = Math.max(
-  profits - pendingWithdrawals,
+
+  const withdrawableProfit = Math.max(
+  profits - totalWithdrawals - pendingWithdrawals,
   0
 );
 
