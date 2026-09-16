@@ -64,13 +64,14 @@
             </h3>
 
             <p className="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-300">
-              We are preparing a live chat service to make communication with
-              our support team even easier.
-            </p>
+  Need help with your BLUESTONIE account? Live chat is available
+  to logged-in customers during our support hours.
+</p>
 
-            <p className="mt-4 font-bold text-blue-600 dark:text-blue-400">
-              Live Chat — Coming Soon
-            </p>
+<p className="mt-4 font-semibold text-blue-600 dark:text-blue-400">
+  To start a chat, go to your Dashboard and tap the chat button
+  at the bottom-right corner of your screen.
+</p>
           </div>
         </div>
 
@@ -344,17 +345,21 @@
               </p>
             </HelpSection>
 
-            <HelpSection title="Live Chat">
-              <p>
-                We are currently preparing a live chat service for BLUESTONIE.
-                This will provide another convenient way for users to
-                communicate directly with the support team.
-              </p>
+     <HelpSection title="Live Chat">
+  <p>
+    BLUESTONIE live chat is available to logged-in customers during
+    support hours.
+  </p>
 
-              <p className="font-semibold text-blue-600 dark:text-blue-400">
-                Live Chat is coming soon.
-              </p>
-            </HelpSection>
+  <p>
+    To start a conversation, open your Dashboard and tap the
+    <strong> chat button</strong> at the bottom-right corner of your screen.
+  </p>
+
+  <p>
+    Support hours are Monday–Friday, 9:00 AM–5:00 PM (EAT).
+  </p>
+</HelpSection>
           </div>
         </section>
 

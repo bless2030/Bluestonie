@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import type { Package, Profile, Wallet } from "@/lib/types";
+import Script from "next/script";
 
 type Notice = {
   id: string;
@@ -720,6 +721,14 @@ const withdrawableProfitUgx = Math.round(
   <div
     className="fixed inset-0 z-40 bg-black/40 lg:hidden"
     onClick={() => setSidebarOpen(false)}
+  />
+)}
+
+{profile && (
+  <Script
+    id="tawk-to"
+    strategy="afterInteractive"
+    src="https://embed.tawk.to/6aaaa88ee1b9133446619dcc/1k2la4s2b"
   />
 )}
 
