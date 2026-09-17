@@ -70,6 +70,9 @@ export default function DashboardPage() {
   const [selectedPackage, setSelectedPackage] =
     useState<Package | null>(null);
 
+    const [referralCopied, setReferralCopied] = useState(false);
+    
+
   const [notices, setNotices] = useState<Notice[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [completedTaskIds, setCompletedTaskIds] = useState<string[]>([]);
@@ -667,6 +670,8 @@ const pendingWithdrawals = withdrawals
   );
 
 
+  
+  
   const withdrawableProfit = Math.max(
   profits - totalWithdrawals - pendingWithdrawals,
   0
@@ -1669,43 +1674,46 @@ const withdrawableProfitUgx = Math.round(
  
 
         {/* NOTICES */}
-        {notices.length > 0 && (
-          <section id="notices" className="mt-6">
-            <div className="mb-3">
-              <h2 className="text-lg font-extrabold text-slate-900">
-                Messages
-              </h2>
+{notices.length > 0 && (
+  <section id="notices" className="mt-6">
+    <div className="mb-3">
+      <h2 className="text-lg font-extrabold text-green-700">
+        Messages
+      </h2>
 
-              <p className="text-xs text-slate-500">
-                Important updates for your account.
-              </p>
-            </div>
+      <p className="text-xs text-slate-500">
+        Important updates for your account.
+      </p>
+    </div>
 
-            <div className="space-y-3">
-              {notices.map((notice) => (
-                <div
-                  key={notice.id}
-                  className="rounded-2xl border border-blue-100 bg-white p-4 shadow-sm"
-                >
-                  <p className="font-extrabold text-slate-900">
-                    {notice.title}
-                  </p>
+    <div className="space-y-3">
+      {notices.map((notice) => (
+        <div
+          key={notice.id}
+          className="rounded-2xl border border-green-100 bg-green-50 p-4 shadow-sm"
+        >
+          <p className="font-extrabold text-green-700">
+            {notice.title}
+          </p>
 
-                  <p className="mt-1 text-sm leading-6 text-slate-600">
-                    {notice.message}
-                  </p>
+          <p className="mt-2 text-xs font-semibold text-red-500">
+            Notice
+          </p>
 
-                  <p className="mt-2 text-[11px] text-slate-400">
-                    {new Date(
-                      notice.created_at
-                    ).toLocaleDateString()}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
+          <p className="mt-1 text-sm leading-6 text-slate-600">
+            {notice.message}
+          </p>
 
+          <p className="mt-2 text-[11px] text-slate-400">
+            {new Date(
+              notice.created_at
+            ).toLocaleDateString()}
+          </p>
+        </div>
+      ))}
+    </div>
+  </section>
+)}
 
         {/* REFERRALS */}
 <section id="referrals" className="mt-6">
@@ -1734,43 +1742,52 @@ const withdrawableProfitUgx = Math.round(
     </div>
 
     {/* Referral Link */}
-    {referralCode && (
-      <div className="mt-4">
-        <p className="text-xs font-semibold text-slate-500">
-          Your Referral Link
-        </p>
+{referralCode && (
+  <div className="mt-4">
+    <p className="text-xs font-semibold text-slate-500">
+      Your Referral Link
+    </p>
 
-        <div className="mt-2 flex gap-2">
-          <input
-            readOnly
-            value={`${window.location.origin}/register?ref=${encodeURIComponent(
-              referralCode
-            )}`}
-            className="min-w-0 flex-1 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600 outline-none"
-          />
+    <div className="mt-2 flex flex-wrap items-center gap-2">
+      <input
+        readOnly
+        value={`${window.location.origin}/register?ref=${encodeURIComponent(
+          referralCode
+        )}`}
+        className="min-w-0 flex-1 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600 outline-none"
+      />
 
-          <button
-            type="button"
-            onClick={async () => {
-              const link = `${window.location.origin}/register?ref=${encodeURIComponent(
-                referralCode
-              )}`;
+      <button
+        type="button"
+        onClick={async () => {
+          const link = `${window.location.origin}/register?ref=${encodeURIComponent(
+            referralCode
+          )}`;
 
-              try {
-                await navigator.clipboard.writeText(link);
-                setMessage("Referral link copied.");
-              } catch {
-                setError("Unable to copy referral link.");
-              }
-            }}
-            className="rounded-xl bg-blue-600 px-4 py-2 text-xs font-bold text-white transition hover:bg-blue-700"
-          >
-            Copy
-          </button>
-        </div>
-      </div>
-    )}
+          try {
+            await navigator.clipboard.writeText(link);
+            setReferralCopied(true);
 
+            setTimeout(() => {
+              setReferralCopied(false);
+            }, 3000);
+          } catch {
+            setError("Unable to copy referral link.");
+          }
+        }}
+        className="rounded-xl bg-blue-600 px-4 py-2 text-xs font-bold text-white transition hover:bg-blue-700"
+      >
+        Copy
+      </button>
+
+      {referralCopied && (
+        <span className="text-xs font-semibold text-green-600">
+          ✓ Referral link copied!
+        </span>
+      )}
+    </div>
+  </div>
+)}
     {/* Referral Statistics */}
     <div className="mt-5 grid grid-cols-2 gap-3 md:grid-cols-4">
       <div className="rounded-xl border border-slate-100 bg-white p-3">
