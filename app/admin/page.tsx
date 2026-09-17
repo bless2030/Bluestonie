@@ -1978,7 +1978,7 @@ function Overview({
 
           <Rule label="Daily activities" value="5" />
           <Rule label="Withdrawal fee" value="5%" />
-          <Rule label="Capital lock" value="2 months" />
+          <Rule label="Capital lock" value="4 months" />
           <Rule label="Minimum investment" value="$10" />
           <Rule label="Maximum investment" value="$500" />
         </div>
@@ -2903,6 +2903,7 @@ function Withdrawals() {
 
 function Users() {
   const [users, setUsers] = useState<Profile[]>([]);
+  const [reactivatingUserId, setReactivatingUserId] = useState<string | null>(null);
 
 const [selectedUser, setSelectedUser] = useState<Profile | null>(null);
 const [userWallet, setUserWallet] = useState<{
@@ -2940,9 +2941,65 @@ const [walletError, setWalletError] = useState("");
       return;
     }
 
+    const reactivateUser = async (userId: string) => {
+  setReactivatingUserId(userId);
+
+  const { error } = await supabase.rpc(
+    "reactivate_dormant_account",
+    { p_user_id: userId }
+  );
+
+  setReactivatingUserId(null);
+
+  if (error) {
+    alert(error.message);
+    return;
+  }
+
+  await loadUsers();
+
+  setSelectedUser((current) =>
+    current?.id === userId
+      ? {
+          ...current,
+          status: "active",
+          updated_at: new Date().toISOString(),
+        }
+      : current
+  );
+};
+
     setUsers((data || []) as Profile[]);
     setLoading(false);
   }, []);
+
+const reactivateUser = async (userId: string) => {
+  setReactivatingUserId(userId);
+
+  const { error } = await supabase.rpc(
+    "reactivate_dormant_account",
+    { p_user_id: userId }
+  );
+
+  setReactivatingUserId(null);
+
+  if (error) {
+    alert(error.message);
+    return;
+  }
+
+  await loadUsers();
+
+  setSelectedUser((current) =>
+    current?.id === userId
+      ? {
+          ...current,
+          status: "active",
+          updated_at: new Date().toISOString(),
+        }
+      : current
+  );
+};
 
 
 const loadUserWallet = async (user: Profile) => {
@@ -3166,8 +3223,21 @@ const loadUserWallet = async (user: Profile) => {
               </p>
 
               <p className="mt-1 font-extrabold text-slate-900">
-                {selectedUser.status || "unknown"}
-              </p>
+  {selectedUser.status || "unknown"}
+</p>
+
+{selectedUser.status === "dormant" && (
+  <button
+    type="button"
+    onClick={() => reactivateUser(selectedUser.id)}
+    disabled={reactivatingUserId === selectedUser.id}
+    className="mt-3 rounded-xl bg-green-600 px-4 py-2 text-sm font-bold text-white transition hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-60"
+  >
+    {reactivatingUserId === selectedUser.id
+      ? "Reactivating..."
+      : "Reactivate Account"}
+  </button>
+)}
             </div>
 
             <div className="rounded-xl bg-slate-50 p-4">
@@ -4124,6 +4194,8 @@ function Transactions() {
     setTransactions(formatted);
     setLoading(false);
   }, []);
+
+  
 
   useEffect(() => {
     void loadTransactions();

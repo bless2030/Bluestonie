@@ -240,6 +240,11 @@ supabase
 
       setProfile(profileResult.data as Profile);
 
+      if ((profileResult.data as Profile).status === "dormant") {
+  setLoading(false);
+  return;
+}
+
 await supabase
   .from("profiles")
   .update({ updated_at: new Date().toISOString() })
@@ -717,6 +722,72 @@ const withdrawableProfitUgx = Math.round(
       </main>
     );
   }
+if (profile?.status === "dormant") {
+  return (
+    <main className="flex min-h-screen items-center justify-center bg-slate-50 px-4">
+      <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-sm">
+        <div className="text-center">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-amber-100 text-amber-700">
+            !
+          </div>
+
+          <h1 className="mt-4 text-xl font-extrabold text-slate-900">
+            Account Dormant
+          </h1>
+
+          <p className="mt-3 text-sm leading-6 text-slate-600">
+            Your BLUESTONIE account is currently dormant due to
+            inactivity for 3 months.
+          </p>
+
+          <p className="mt-3 text-sm leading-6 text-slate-600">
+            To request reactivation of your account, please contact
+            BLUESTONIE Support using the email address below.
+          </p>
+        </div>
+
+        <div className="mt-6 rounded-xl bg-slate-50 p-4 text-center">
+          <p className="text-xs font-bold uppercase tracking-wide text-slate-400">
+            Support Email
+          </p>
+
+          <a
+            href="mailto:YOUR_SUPPORT_EMAIL@gmail.com"
+            className="mt-2 block text-sm font-bold text-blue-600 hover:underline"
+          >
+            bluestonieinvestments@gmail.com
+          </a>
+        </div>
+
+        <div className="mt-5 rounded-xl border border-amber-200 bg-amber-50 p-4">
+          <p className="text-sm font-bold text-amber-900">
+            When contacting Support, please provide:
+          </p>
+
+          <ul className="mt-3 space-y-2 text-sm leading-6 text-amber-800">
+            <li>• Full name</li>
+            <li>• Registered phone number</li>
+            <li>• Email address used to register the account</li>
+            <li>• Reason for contacting Support: Account reactivation</li>
+          </ul>
+        </div>
+
+        <p className="mt-5 text-center text-xs leading-5 text-slate-500">
+          Our support team will review your request and assist you
+          with reactivating your account.
+        </p>
+
+        <button
+          onClick={handleLogout}
+          className="mt-6 w-full rounded-xl bg-blue-600 px-5 py-3 text-sm font-bold text-white transition hover:bg-blue-700"
+        >
+          Log Out
+        </button>
+      </div>
+    </main>
+  );
+}
+
 
   return (
     <main className="min-h-screen bg-slate-200 lg:pl-72">
