@@ -1035,6 +1035,47 @@ if (profile?.status === "dormant") {
   </div>
 </header>
       <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6">
+
+ {/* NOTICES */}
+{notices.length > 0 && (
+  <section id="notices" className="mt-6">
+    <div className="mb-3">
+      <h2 className="text-lg font-extrabold text-green-700">
+      </h2>
+
+      <p className="text-xs text-slate-500">
+      </p>
+    </div>
+
+    <div className="space-y-3">
+      {notices.map((notice) => (
+        <div
+          key={notice.id}
+          className="rounded-2xl border border-green-100 bg-green-50 p-4 shadow-sm"
+        >
+          <p className="font-extrabold text-green-700">
+            {notice.title}
+          </p>
+
+          <p className="mt-2 text-xs font-semibold text-red-500">
+            Notice
+          </p>
+
+          <p className="mt-1 text-sm leading-6 text-slate-600">
+            {notice.message}
+          </p>
+
+          <p className="mt-2 text-[11px] text-slate-400">
+            {new Date(
+              notice.created_at
+            ).toLocaleDateString()}
+          </p>
+        </div>
+      ))}
+    </div>
+  </section>
+)}
+
         {/* TOP ACCOUNT AREA */}
         <section className="rounded-3xl bg-slate-900 p-5 text-white shadow-lg sm:p-6">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
@@ -1744,48 +1785,6 @@ if (profile?.status === "dormant") {
 
  
 
-        {/* NOTICES */}
-{notices.length > 0 && (
-  <section id="notices" className="mt-6">
-    <div className="mb-3">
-      <h2 className="text-lg font-extrabold text-green-700">
-        Messages
-      </h2>
-
-      <p className="text-xs text-slate-500">
-        Important updates for your account.
-      </p>
-    </div>
-
-    <div className="space-y-3">
-      {notices.map((notice) => (
-        <div
-          key={notice.id}
-          className="rounded-2xl border border-green-100 bg-green-50 p-4 shadow-sm"
-        >
-          <p className="font-extrabold text-green-700">
-            {notice.title}
-          </p>
-
-          <p className="mt-2 text-xs font-semibold text-red-500">
-            Notice
-          </p>
-
-          <p className="mt-1 text-sm leading-6 text-slate-600">
-            {notice.message}
-          </p>
-
-          <p className="mt-2 text-[11px] text-slate-400">
-            {new Date(
-              notice.created_at
-            ).toLocaleDateString()}
-          </p>
-        </div>
-      ))}
-    </div>
-  </section>
-)}
-
         {/* REFERRALS */}
 <section id="referrals" className="mt-6">
   <div className="mb-3">
@@ -2200,6 +2199,20 @@ if (profile?.status === "dormant") {
           </section>
         )}
       </div>
+
+<a
+  href="https://chat.whatsapp.com/HzD4mtUeZDE8Yd3L9eMqOi"
+  target="_blank"
+  rel="noopener noreferrer"
+  aria-label="Join Our WhatsApp Group"
+  className="fixed bottom-24 right-4 z-50 flex items-center gap-1.5 rounded-full bg-green-500 px-3 py-2 text-white shadow-md transition hover:scale-105 hover:bg-green-600"
+>
+  <span className="text-lg">◉</span>
+
+  <span className="text-xs font-bold">
+    Join our 4th group
+  </span>
+</a>
     </main>
   );
 }
