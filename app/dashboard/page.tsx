@@ -536,11 +536,16 @@ depositSettings.forEach((setting) => {
       return;
     }
 
-    if (amount > withdrawableProfit) {
-  setError(
-    `You can only withdraw up to your available profit of $${withdrawableProfit.toFixed(
+    if (!withdrawPaymentDetails.trim()) {
+  setError("Enter your payment details.");
+  return;
+}
+
+if (amount > withdrawableProfit) {
+  window.alert(
+    `Insufficient withdrawable profit. You currently have $${withdrawableProfit.toFixed(
       2
-    )}.`
+    )} available.`
   );
   return;
 }
@@ -557,17 +562,17 @@ depositSettings.forEach((setting) => {
     setSubmittingWithdrawal(false);
 
     if (withdrawalError) {
-      setError(withdrawalError.message);
-      return;
-    }
+  window.alert(withdrawalError.message);
+  return;
+}
 
-    if (!data?.success) {
-      setError(
-        data?.message ||
-          "Unable to submit withdrawal request."
-      );
-      return;
-    }
+if (!data?.success) {
+  window.alert(
+    data?.message ||
+      "Unable to submit withdrawal request."
+  );
+  return;
+}
 
     setWithdrawAmount("");
     setWithdrawPaymentDetails("");
