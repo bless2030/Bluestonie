@@ -2215,7 +2215,7 @@ if (profile?.status === "dormant") {
   <span className="text-lg">◉</span>
 
   <span className="text-xs font-bold">
-    Join our 4th group
+    Join Whatsapp group
   </span>
 </a>
     </main>
